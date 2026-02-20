@@ -1,7 +1,9 @@
 <div align="center">
 
-# � GÖKBÖRÜ OTONOM SİSTEMLERİ
-## �🛰️ Teknofest Model Uydu Yarışması | 2024 Finalist
+[![GÖKBÖRÜ Banner](assets/banner.png)](https://github.com/bahattinyunus/teknofest_hareketli_uydu_terminali)
+
+# 🐺 GÖKBÖRÜ OTONOM SİSTEMLERİ
+## 🛰️ Teknofest Model Uydu Yarışması | 2024 Finalist
 
 ![Missions Success](https://img.shields.io/badge/Mission-Success-success?style=for-the-badge&logo=spacex)
 ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)
