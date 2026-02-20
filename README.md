@@ -16,28 +16,64 @@
 
 **Teknofest Hareketli Uydu Terminali** projesi, model uydu yarışması kapsamında geliştirilen, yüksek hareket kabiliyetine ve hassas veri iletişimine sahip bir yer istasyonu ve uydu sistemidir.
 
-Bu repo, projenin tüm yazılım altyapısını, analiz araçlarını ve dokümantasyonunu barındırır.
+> "Gökyüzü sadece bir başlangıç, sınır değil." 🌌
 
-### 🎯 Temel Hedefler | Core Objectives
-- **Hassas İletişim:** Uzun mesafeli veri aktarımı ve telemetri takibi.
-- **Otonom Kontrol:** Uydu terminalinin otonom yönelimi ve stabilizasyonu.
-- **Gerçek Zamanlı Analiz:** Uçuş verilerinin anlık işlenmesi ve görselleştirilmesi.
+Bu repo, projenin tüm yazılım altyapısını, analiz araçlarını ve dokümantasyonunu barındırır.
 
 ---
 
-## 🛠️ Özellikler | Features
+## 🏗️ Sistem Mimarisi | System Architecture
 
-- **📡 Güçlü İletişim Altyapısı**
-  - Uzun menzilli LoRa/RF modülleri ile kesintisiz veri akışı.
-  - Özel geliştirilmiş *Link Budget* hesaplayıcıları.
+Aşağıdaki diyagram, yer istasyonu ve uydu arasındaki veri akışını ve kontrol döngüsünü göstermektedir.
 
-- **🪂 Uçuş Mekaniği ve Analiz**
-  - Paraşüt boyutlandırma algoritmaları.
-  - İniş hızı simülasyonları.
+```mermaid
+graph TD
+    subgraph Space Segment [🛰️ Uydu Segmenti]
+        Sensors[Sensör Verisi] -->|Okuma| OBC[On-Board Computer]
+        OBC -->|Paketleme| LoRaTx[LoRa Verici]
+    end
 
-- **💻 Modüler Yazılım Mimarisi**
-  - Kolay genişletilebilir Python tabanlı analiz araçları.
-  - Temiz ve dokümante edilmiş kod yapısı.
+    subgraph Ground Segment [🌍 Yer İstasyonu]
+        LoRaRx[LoRa Alıcı] -->|Sinyal| GCS[Yer Kontrol Yazılımı]
+        GCS -->|Parse| Dashboard[Telemetri Arayüzü]
+        GCS -->|Analiz| Analytics[Uçuş Analizi]
+        User[Operatör] -->|Komut| GCS
+        GCS -->|Kontrol| Antenna[Anten Takip Sistemi]
+    end
+
+    LoRaTx -.->|433 MHz RF Link| LoRaRx
+    Antenna -.->|Yönelim| Space Segment
+```
+
+---
+
+## 🛠️ Teknoloji Yığını | Tech Stack
+
+<div align="center">
+
+| Kategori | Teknolojiler |
+| :--- | :--- |
+| **Diller** | ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white) ![C++](https://img.shields.io/badge/C++-00599C?style=flat-square&logo=c%2B%2B&logoColor=white) |
+| **Donanım** | ![Raspberry Pi](https://img.shields.io/badge/Raspberry%20Pi-A22846?style=flat-square&logo=raspberry-pi&logoColor=white) ![Arduino](https://img.shields.io/badge/Arduino-00979D?style=flat-square&logo=arduino&logoColor=white) |
+| **İletişim** | ![LoRa](https://img.shields.io/badge/LoRa-Communication-orange?style=flat-square) |
+| **Veri** | ![NumPy](https://img.shields.io/badge/NumPy-013243?style=flat-square&logo=numpy&logoColor=white) ![Pandas](https://img.shields.io/badge/Pandas-150458?style=flat-square&logo=pandas&logoColor=white) |
+
+</div>
+
+---
+
+## 🗺️ Yol Haritası | Roadmap
+
+- [x] **Faz 1: Hazırlık**
+  - [x] Repo kurulumu ve dizin yapısı
+  - [x] Temel analiz araçları (`parachute_sizing`, `link_budget`)
+- [ ] **Faz 2: Çekirdek Geliştirme**
+  - [x] Yer istasyonu iskelet yapısı
+  - [x] Telemetri protokol tasarımı
+  - [ ] RF iletişim modülü entegrasyonu
+- [ ] **Faz 3: Arayüz ve Test**
+  - [ ] GUI Tasarımı (PyQt/Tkinter)
+  - [ ] Saha testleri ve optimizasyon
 
 ---
 
@@ -45,28 +81,27 @@ Bu repo, projenin tüm yazılım altyapısını, analiz araçlarını ve doküma
 
 ```bash
 teknofest_hareketli_uydu_terminali/
-├── analysis/           # Analiz ve hesaplama araçları
-│   └── calculators/    # Link budget, paraşüt vb. hesaplayıcılar
-├── src/                # Kaynak kodlar (Gömülü yazılım, arayüz vb.)
-├── docs/               # Proje dokümantasyonu ve raporlar
-├── assets/             # Görseller ve şemalar
-└── README.md           # Proje ana dokümanı
+├── 📂 analysis/           # 🧮 Mühendislik analizleri
+│   └── calculators/       # Hesaplama scriptleri
+├── 📂 src/                # 💻 Kaynak kodlar
+│   ├── ground_station.py  # Ana kontrol yazılımı
+│   └── telemetry.py       # Veri paketleme modülü
+├── 📂 docs/               # 📚 Dokümantasyon
+└── 📄 requirements.txt    # 📦 Bağımlılıklar
 ```
 
 ---
 
 ## 🧮 Analiz Araçları | Analysis Tools
 
-Bu proje, mühendislik hesaplamalarını otomatize etmek için özel Python scriptleri içerir.
-
-### 1. Paraşüt Boyutlandırma (`parachute_sizing.py`)
-Model uydunun istenen iniş hızına ulaşması için gereken paraşüt çapını hesaplar.
+### 1. Paraşüt Boyutlandırma
+Model uydunun güvenli inişi için gerekli hesaplamalar.
 ```bash
 python analysis/calculators/parachute_sizing.py
 ```
 
-### 2. Link Bütçesi Hesaplama (`link_budget.py`)
-Haberleşme sisteminin güvenilirliğini test etmek için RF link bütçesi hesabı yapar.
+### 2. Link Bütçesi
+İletişim menzili ve güvenilirliği analizi.
 ```bash
 python analysis/calculators/link_budget.py
 ```
@@ -75,33 +110,21 @@ python analysis/calculators/link_budget.py
 
 ## 🚀 Kurulum | Installation
 
-Projeyi yerel ortamınızda çalıştırmak için aşağıdaki adımları izleyin:
-
 1. **Repoyu Klonlayın:**
    ```bash
    git clone https://github.com/bahattinyunus/teknofest_hareketli_uydu_terminali.git
-   cd teknofest_hareketli_uydu_terminali
    ```
 
-2. **Gereksinimleri Yükleyin:**
+2. **Bağımlılıkları Yükleyin:**
    ```bash
    pip install -r requirements.txt
    ```
 
 ---
 
-## 🤝 Katkıda Bulunma | Contributing
-
-1. Bu repoyu forklayın.
-2. Yeni bir özellik dalı (feature branch) oluşturun (`git checkout -b ozellik/YeniOzellik`).
-3. Değişikliklerinizi commit edin (`git commit -m 'Yeni özellik eklendi'`).
-4. Dalınızı pushlayın (`git push origin ozellik/YeniOzellik`).
-5. Bir Pull Request oluşturun.
-
----
-
 <div align="center">
 
-**[Takım İsmi]** tarafından ❤️ ile geliştirilmiştir.
+**[Takım İsmi]** &copy; 2024
+*"Geleceğe Uçuyoruz" by Bahattin Yunus*
 
 </div>
