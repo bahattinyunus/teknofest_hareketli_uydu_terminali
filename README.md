@@ -1,0 +1,1 @@
+# teknofest_hareketli_uydu_terminali
