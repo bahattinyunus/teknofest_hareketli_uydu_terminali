@@ -94,16 +94,28 @@ teknofest_hareketli_uydu_terminali/
 
 ## 🧮 Analiz Araçları | Analysis Tools
 
-### 1. Paraşüt Boyutlandırma
+### 1. Paraşüt Boyutlandırma (`parachute_sizing.py`)
 Model uydunun güvenli inişi için gerekli hesaplamalar.
 ```bash
 python analysis/calculators/parachute_sizing.py
 ```
 
-### 2. Link Bütçesi
+### 2. Link Bütçesi (`link_budget.py`)
 İletişim menzili ve güvenilirliği analizi.
 ```bash
 python analysis/calculators/link_budget.py
+```
+
+### 3. Anten Yönlendirme (`antenna_pointing.py`)
+Yer istasyonunun uyduyu takip etmesi için gerekli Azimuth ve Elevation açılarını hesaplar.
+```bash
+python analysis/calculators/antenna_pointing.py
+```
+
+### 4. İniş Profili Simülasyonu (`descent_profile.py`)
+Model uydunun iniş hızını ve irtifasını zamana bağlı olarak simüle eder ve grafik, `descent_profile.png` olarak kaydeder.
+```bash
+python analysis/simulations/descent_profile.py
 ```
 
 ---
