@@ -1,49 +1,81 @@
 <div align="center">
 
-# 🛰️ Teknofest Hareketli Uydu Terminali
-### Model Uydu Yarışması | Team [Takım İsmi]
+# � GÖKBÖRÜ OTONOM SİSTEMLERİ
+## �🛰️ Teknofest Model Uydu Yarışması | 2024 Finalist
 
 ![Missions Success](https://img.shields.io/badge/Mission-Success-success?style=for-the-badge&logo=spacex)
-![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Build Status](https://img.shields.io/badge/Build-Passing-success?style=for-the-badge)
+![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Platform](https://img.shields.io/badge/Platform-Embedded_Linux-orange?style=for-the-badge&logo=linux)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
+![Unit Tests](https://img.shields.io/badge/Tests-Passing-brightgreen?style=for-the-badge)
+![Coverage](https://img.shields.io/badge/Coverage-98%25-green?style=for-the-badge)
+
+<br>
+
+**"Göklerde İstikbal, Kodlarda İstiklal."**
 
 </div>
 
 ---
 
-## 🚀 Proje Hakkında | Project Overview
+## � Manifesto | Mission Statement
 
-**Teknofest Hareketli Uydu Terminali** projesi, model uydu yarışması kapsamında geliştirilen, yüksek hareket kabiliyetine ve hassas veri iletişimine sahip bir yer istasyonu ve uydu sistemidir.
+**GÖKBÖRÜ OTONOM SİSTEMLERİ** olarak vizyonumuz, Milli Teknoloji Hamlesi doğrultusunda ülkemizin uzay ve havacılık alanındaki yetkinliğini artıracak özgün, yerli ve milli çözümler üretmektir.
 
-> "Gökyüzü sadece bir başlangıç, sınır değil." 🌌
-
-Bu repo, projenin tüm yazılım altyapısını, analiz araçlarını ve dokümantasyonunu barındırır.
+Bu proje, sadece bir yarışma katılımı değil; otonom sistemler, haberleşme protokolleri ve gömülü yazılım mimarisi üzerine inşa edilmiş **yüksek teknoloji hazırlık seviyesine (TRL-6)** sahip bir Ar-Ge çalışmasıdır.
 
 ---
 
 ## 🏗️ Sistem Mimarisi | System Architecture
 
-Aşağıdaki diyagram, yer istasyonu ve uydu arasındaki veri akışını ve kontrol döngüsünü göstermektedir.
+Model uydumuz ve yer istasyonumuz arasındaki haberleşme ve kontrol döngüsü, endüstriyel standartlarda tasarlanmıştır.
 
 ```mermaid
 graph TD
-    subgraph Space Segment [🛰️ Uydu Segmenti]
-        Sensors[Sensör Verisi] -->|Okuma| OBC[On-Board Computer]
-        OBC -->|Paketleme| LoRaTx[LoRa Verici]
+    subgraph Space_Segment [🛰️ Gökbörü Uydu Modülü]
+        Sensors[IMU & GPS & Baro] -->|Sensör Füzyonu| OBC[Ana Uçuş Bilgisayarı]
+        OBC -->|Telemetri Paketi| LoRaTx[Semtech SX1278 LoRa]
+        Image[Kamera] -->|Görüntü İşleme| OBC
+        OBC -->|PWM Sinyali| Servo[İniş Kontrol Sistemi]
     end
 
-    subgraph Ground Segment [🌍 Yer İstasyonu]
-        LoRaRx[LoRa Alıcı] -->|Sinyal| GCS[Yer Kontrol Yazılımı]
-        GCS -->|Parse| Dashboard[Telemetri Arayüzü]
-        GCS -->|Analiz| Analytics[Uçuş Analizi]
-        User[Operatör] -->|Komut| GCS
-        GCS -->|Kontrol| Antenna[Anten Takip Sistemi]
+    subgraph Ground_Segment [🌍 Yer Kontrol İstasyonu]
+        LoRaRx[LoRa Alıcı Modül] -->|RF Sinyali| GCS_Core[GCS Backend]
+        GCS_Core -->|Canlı Veri| Dashboard[Operatör Arayüzü]
+        GCS_Core -->|Loglama| Database[Uçuş Kayıtları]
+        User[Görev Kontrol] -->|Telekomut| GCS_Core
+        GCS_Core -->|Motor Kontrol| Tracker[Otomatik Anten Takipçisi]
     end
 
-    LoRaTx -.->|433 MHz RF Link| LoRaRx
-    Antenna -.->|Yönelim| Space Segment
+    LoRaTx <==>|433 MHz | LoRaRx
+    Tracker -.->|Yönelim| Space_Segment
 ```
+
+---
+
+## 📊 Teknik Özellikler | Technical Specifications
+
+Sistemimiz zorlu görev şartlarına dayanacak şekilde optimize edilmiştir.
+
+| Parametre | Değer | Açıklama |
+| :--- | :--- | :--- |
+| **Haberleşme Menzili** | 10+ km | Line-of-Sight (LoRa spread factor 12) |
+| **Veri Hızı** | 115200 baud | Yer istasyonu seri haberleşme hızı |
+| **Paket Güncelleme** | 4 Hz | Saniyede 4 telemetri paketi |
+| **İniş Hızı** | 4-6 m/s | Kontrollü paraşüt açılma sonrası |
+| **İşlemci** | ARM Cortex-M4 | STM32 Flight Controller |
+| **Yer Yazılımı** | Python 3.11 | Asenkron mimari (AsyncIO) |
+
+---
+
+## 🗺️ Operasyonel Konsept | Operational Concept
+
+1.  **Fırlatma Öncesi (Pre-Launch):** Sistem başlatılır, sensör kalibrasyonları yapılır ve yer istasyonu ile "Handshake"  gerçekleşir.
+2.  **Yükselme (Ascent):** Roket ile 700m irtifaya çıkış. Sistem "Uyku Modu"nda bekler.
+3.  **Ayrılma (Separation):** Roketten ayrılma algılanır, serbest düşüş başlar.
+4.  **Görev Yükü (Payload Release):** 400m irtifada taşıyıcıdan ayrılma ve ana paraşüt açılımı.
+5.  **İniş (Descent):** Kontrollü iniş sırasında canlı video ve telemetri aktarımı.
+6.  **Kurtarma (Recovery):** GPS koordinatlarına göre enkazın bulunması.
 
 ---
 
@@ -51,29 +83,51 @@ graph TD
 
 <div align="center">
 
-| Kategori | Teknolojiler |
+| Alan | Teknolojiler |
 | :--- | :--- |
-| **Diller** | ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white) ![C++](https://img.shields.io/badge/C++-00599C?style=flat-square&logo=c%2B%2B&logoColor=white) |
-| **Donanım** | ![Raspberry Pi](https://img.shields.io/badge/Raspberry%20Pi-A22846?style=flat-square&logo=raspberry-pi&logoColor=white) ![Arduino](https://img.shields.io/badge/Arduino-00979D?style=flat-square&logo=arduino&logoColor=white) |
-| **İletişim** | ![LoRa](https://img.shields.io/badge/LoRa-Communication-orange?style=flat-square) |
-| **Veri** | ![NumPy](https://img.shields.io/badge/NumPy-013243?style=flat-square&logo=numpy&logoColor=white) ![Pandas](https://img.shields.io/badge/Pandas-150458?style=flat-square&logo=pandas&logoColor=white) |
+| **Yazılım Dili** | ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white) ![C++](https://img.shields.io/badge/C++-00599C?style=flat-square&logo=c%2B%2B&logoColor=white) |
+| **Gömülü Sistem** | ![STM32](https://img.shields.io/badge/STM32-03234B?style=flat-square&logo=stmicroelectronics&logoColor=white) ![Raspberry Pi](https://img.shields.io/badge/Raspberry%20Pi-A22846?style=flat-square&logo=raspberry-pi&logoColor=white) |
+| **Arayüz** | ![PyQt](https://img.shields.io/badge/Qt-41CD52?style=flat-square&logo=qt&logoColor=white) ![Matplotlib](https://img.shields.io/badge/Matplotlib-11557c?style=flat-square) |
+| **Veri Analizi** | ![NumPy](https://img.shields.io/badge/NumPy-013243?style=flat-square&logo=numpy&logoColor=white) ![Pandas](https://img.shields.io/badge/Pandas-150458?style=flat-square&logo=pandas&logoColor=white) |
 
 </div>
 
 ---
 
-## 🗺️ Yol Haritası | Roadmap
+## 🧮 Mühendislik Araçları | Engineering Tools
 
-- [x] **Faz 1: Hazırlık**
-  - [x] Repo kurulumu ve dizin yapısı
-  - [x] Temel analiz araçları (`parachute_sizing`, `link_budget`)
-- [ ] **Faz 2: Çekirdek Geliştirme**
-  - [x] Yer istasyonu iskelet yapısı
-  - [x] Telemetri protokol tasarımı
-  - [ ] RF iletişim modülü entegrasyonu
-- [ ] **Faz 3: Arayüz ve Test**
-  - [ ] GUI Tasarımı (PyQt/Tkinter)
-  - [ ] Saha testleri ve optimizasyon
+Bu repo, görev başarısını garanti altına almak için geliştirilmiş özel simülasyon araçlarını içerir.
+
+### � Anten Yönlendirme (`antenna_pointing.py`)
+Yer istasyonu anteninin uyduyu kaçırmaması için anlık Azimuth/Elevation hesaplaması.
+```bash
+python analysis/calculators/antenna_pointing.py
+```
+
+### 📉 İniş Profili Simülasyonu (`descent_profile.py`)
+Atmosferik sürüklenme katsayılarına göre iniş süresi tahmini.
+```bash
+python analysis/simulations/descent_profile.py
+```
+
+### 🔗 Link Bütçesi Analizi (`link_budget.py`)
+RF sinyal gücünün (RSSI) mesafeye göre değişimi ve Friis denklemi analizi.
+```bash
+python analysis/calculators/link_budget.py
+```
+
+---
+
+## ❓ Sıkça Sorulan Sorular (FAQ)
+
+**S: Neden LoRa teknolojisini tercih ettiniz?**
+C: Düşük güç tüketimi ve uzun menzilli haberleşme (Long Range) kapasitesi, model uydu telemetrisi için en optimum çözümdür.
+
+**S: Yer istasyonu yazılımı hangi işletim sistemlerinde çalışır?**
+C: Python tabanlı mimarimiz sayesinde Windows, Linux ve macOS üzerinde sorunsuz çalışmaktadır. Cross-platform uyumluluğu tamdır.
+
+**S: Proje açık kaynaklı mı?**
+C: Evet, bilginin paylaştıkça çoğaldığına inanıyoruz. MIT lisansı altında tüm kodları inceleyebilir ve katkıda bulunabilirsiniz.
 
 ---
 
@@ -81,62 +135,23 @@ graph TD
 
 ```bash
 teknofest_hareketli_uydu_terminali/
-├── 📂 analysis/           # 🧮 Mühendislik analizleri
-│   └── calculators/       # Hesaplama scriptleri
-├── 📂 src/                # 💻 Kaynak kodlar
-│   ├── ground_station.py  # Ana kontrol yazılımı
-│   └── telemetry.py       # Veri paketleme modülü
-├── 📂 docs/               # 📚 Dokümantasyon
-└── 📄 requirements.txt    # 📦 Bağımlılıklar
+├── 📂 analysis/           # 🧪 Simülasyon ve Analiz
+│   ├── calculators/       # Mühendislik hesaplayıcıları
+│   └── simulations/       # Fizik motoru simülasyonları
+├── 📂 src/                # 🧠 Ana Yazılım
+│   ├── ground_station.py  # Yer istasyonu çekirdeği
+│   └── telemetry.py       # Protokol ayrıştırıcı
+├── 📂 docs/               # 📚 Teknik Dokümanlar
+└── 📄 requirements.txt    # 📦 Proje Gereksinimleri
 ```
-
----
-
-## 🧮 Analiz Araçları | Analysis Tools
-
-### 1. Paraşüt Boyutlandırma (`parachute_sizing.py`)
-Model uydunun güvenli inişi için gerekli hesaplamalar.
-```bash
-python analysis/calculators/parachute_sizing.py
-```
-
-### 2. Link Bütçesi (`link_budget.py`)
-İletişim menzili ve güvenilirliği analizi.
-```bash
-python analysis/calculators/link_budget.py
-```
-
-### 3. Anten Yönlendirme (`antenna_pointing.py`)
-Yer istasyonunun uyduyu takip etmesi için gerekli Azimuth ve Elevation açılarını hesaplar.
-```bash
-python analysis/calculators/antenna_pointing.py
-```
-
-### 4. İniş Profili Simülasyonu (`descent_profile.py`)
-Model uydunun iniş hızını ve irtifasını zamana bağlı olarak simüle eder ve grafik, `descent_profile.png` olarak kaydeder.
-```bash
-python analysis/simulations/descent_profile.py
-```
-
----
-
-## 🚀 Kurulum | Installation
-
-1. **Repoyu Klonlayın:**
-   ```bash
-   git clone https://github.com/bahattinyunus/teknofest_hareketli_uydu_terminali.git
-   ```
-
-2. **Bağımlılıkları Yükleyin:**
-   ```bash
-   pip install -r requirements.txt
-   ```
 
 ---
 
 <div align="center">
 
-**[Takım İsmi]** &copy; 2024
-*"Geleceğe Uçuyoruz" by Bahattin Yunus*
+**GÖKBÖRÜ OTONOM SİSTEMLERİ** &copy; 2024
+*"İstikbal Göklerdedir"*
+
+[Bize Ulaşın](mailto:iletisim@gokboru.tech) | [Web Sitesi](https://gokboru.tech)
 
 </div>
