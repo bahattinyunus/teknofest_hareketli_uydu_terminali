@@ -1,20 +1,18 @@
 <div align="center">
 
-[![GÖKBÖRÜ Banner](assets/banner.png)](https://github.com/bahattinyunus/teknofest_hareketli_uydu_terminali)
+[![SOTM Banner](assets/banner.png)](https://github.com/bahattinyunus/teknofest_hareketli_uydu_terminali)
 
-# 🐺 GÖKBÖRÜ OTONOM SİSTEMLERİ
-## 🛰️ Teknofest Model Uydu Yarışması | 2024 Finalist
+# 🐺 GÖKBÖRÜ MOBİL SİSTEMLER
+## 🛰️ Teknofest Hareketli Uydu Terminali Yarışması | 2026
 
-![Missions Success](https://img.shields.io/badge/Mission-Success-success?style=for-the-badge&logo=spacex)
+![Mission Status](https://img.shields.io/badge/Mission-In_Progress-yellow?style=for-the-badge&logo=spacex)
 ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Platform](https://img.shields.io/badge/Platform-Embedded_Linux-orange?style=for-the-badge&logo=linux)
+![Platform](https://img.shields.io/badge/Platform-STM32_/_Linux-orange?style=for-the-badge&logo=stmicroelectronics)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
-![Unit Tests](https://img.shields.io/badge/Tests-Passing-brightgreen?style=for-the-badge)
-![Coverage](https://img.shields.io/badge/Coverage-98%25-green?style=for-the-badge)
 
 <br>
 
-**"Göklerde İstikbal, Kodlarda İstiklal."**
+**"Hareket Halinde Kesintisiz İletişim, Yerli ve Milli Stabilizasyon."**
 
 </div>
 
@@ -28,56 +26,56 @@ Bu proje, sadece bir yarışma katılımı değil; otonom sistemler, haberleşme
 
 ---
 
-## 🏗️ Sistem Mimarisi | System Architecture
+## 🛰️ Sistem Mimarisi | System Architecture
 
-Model uydumuz ve yer istasyonumuz arasındaki haberleşme ve kontrol döngüsü, endüstriyel standartlarda tasarlanmıştır.
+SOTM (Satcom on The Move) sistemimiz, Stewart platformu üzerinde hareket eden bir terminalin, dış etkenlere (Roll/Pitch/Yaw) rağmen uyduya kilitli kalmasını sağlar.
 
 ```mermaid
 graph TD
-    subgraph Space_Segment [🛰️ Gökbörü Uydu Modülü]
-        Sensors[IMU & GPS & Baro] -->|Sensör Füzyonu| OBC[Ana Uçuş Bilgisayarı]
-        OBC -->|Telemetri Paketi| LoRaTx[Semtech SX1278 LoRa]
-        Image[Kamera] -->|Görüntü İşleme| OBC
-        OBC -->|PWM Sinyali| Servo[İniş Kontrol Sistemi]
+    subgraph Platform_Segment [🏗️ Stewart Hareket Platformu]
+        Move[Dinamik Hareket ±8°] -->|Eğim Verisi| IMU[IMU / Gyro Sensör]
     end
 
-    subgraph Ground_Segment [🌍 Yer Kontrol İstasyonu]
-        LoRaRx[LoRa Alıcı Modül] -->|RF Sinyali| GCS_Core[GCS Backend]
-        GCS_Core -->|Canlı Veri| Dashboard[Operatör Arayüzü]
-        GCS_Core -->|Loglama| Database[Uçuş Kayıtları]
-        User[Görev Kontrol] -->|Telekomut| GCS_Core
-        GCS_Core -->|Motor Kontrol| Tracker[Otomatik Anten Takipçisi]
+    subgraph Terminal_Segment [📡 SOTM Stabilizasyon]
+        IMU -->|Raw Data| MCU[OBC - STM32/Arduino]
+        MCU -->|PID Kontrol| Motors[Azimuth & Elevation Servo]
+        Motors -->|Yönelim| Antenna[Parabolik Anten & Lazer]
+        MCU -->|Telemetri| GCS[Yer Kontrol Yazılımı]
     end
 
-    LoRaTx <==>|433 MHz | LoRaRx
-    Tracker -.->|Yönelim| Space_Segment
+    subgraph Control_Segment [🎮 Operatör Arayüzü]
+        GCS -->|Komut| MCU
+        User[Operatör] -->|Manuel/Oto Seçimi| GCS
+        GCS -->|Görselleme| Dashboard[Dashboard]
+    end
+
+    Antenna ===>|Lazer Takibi| Satellite[Hedef Uydu / Nokta]
 ```
 
 ---
 
 ## 📊 Teknik Özellikler | Technical Specifications
 
-Sistemimiz zorlu görev şartlarına dayanacak şekilde optimize edilmiştir.
-
 | Parametre | Değer | Açıklama |
 | :--- | :--- | :--- |
-| **Haberleşme Menzili** | 10+ km | Line-of-Sight (LoRa spread factor 12) |
-| **Veri Hızı** | 115200 baud | Yer istasyonu seri haberleşme hızı |
-| **Paket Güncelleme** | 4 Hz | Saniyede 4 telemetri paketi |
-| **İniş Hızı** | 4-6 m/s | Kontrollü paraşüt açılma sonrası |
-| **İşlemci** | ARM Cortex-M4 | STM32 Flight Controller |
-| **Yer Yazılımı** | Python 3.11 | Asenkron mimari (AsyncIO) |
+| **Terminal Tipi** | SoTM (Satcom on The Move) | Stabilize Uydu Yer Terminali |
+| **Hareket Kabiliyeti** | Az: 0-360°, El: 0-90° | Tam Küresel Takip Yeteneği |
+| **Stabilizasyon** | Roll/Pitch: ±8° | Stewart Platformu Telafisi |
+| **Takip Hassasiyeti** | < 0.5° Error | Dinamik Koşullarda Boresight Kilidi |
+| **Ağırlık** | < 20 kg | Tüm bileşenler dahil |
+| **Güç Tüketimi** | ≤ 140 W | 5VDC - 36VDC / 220VAC |
+| **Yazılım** | Python & C++ | Real-time Kontrol ve GUI |
 
 ---
 
 ## 🗺️ Operasyonel Konsept | Operational Concept
 
-1.  **Fırlatma Öncesi (Pre-Launch):** Sistem başlatılır, sensör kalibrasyonları yapılır ve yer istasyonu ile "Handshake"  gerçekleşir.
-2.  **Yükselme (Ascent):** Roket ile 700m irtifaya çıkış. Sistem "Uyku Modu"nda bekler.
-3.  **Ayrılma (Separation):** Roketten ayrılma algılanır, serbest düşüş başlar.
-4.  **Görev Yükü (Payload Release):** 400m irtifada taşıyıcıdan ayrılma ve ana paraşüt açılımı.
-5.  **İniş (Descent):** Kontrollü iniş sırasında canlı video ve telemetri aktarımı.
-6.  **Kurtarma (Recovery):** GPS koordinatlarına göre enkazın bulunması.
+1.  **Kurulum:** Sistem Stewart platformuna monte edilir ve GPS parametreleri girilir.
+2.  **Kalibrasyon:** Gyro/IMU sensörleri sıfırlanır, boresight referans noktası belirlenir.
+3.  **Arama/Kilitlenme:** Uydu parametrelerine (Türksat 4B/5A) göre ilk yönelim yapılır (Re-pointing < 8s).
+4.  **Stabilizasyon:** Platform hareket etmeye başladığında (±8° Roll/Pitch), kontrol algoritması anteni hedefte sabit tutar.
+5.  **Takip:** 5 dakika boyunca kesintisiz olarak lazerin hedef çemberler içinde kalması sağlanır.
+6.  **Manuel Müdahale:** Arayüz üzerinden istenilen açı değerlerine anlık geçiş yapılır.
 
 ---
 
@@ -137,14 +135,16 @@ C: Evet, bilginin paylaştıkça çoğaldığına inanıyoruz. MIT lisansı alt�
 
 ```bash
 teknofest_hareketli_uydu_terminali/
-├── 📂 analysis/           # 🧪 Simülasyon ve Analiz
-│   ├── calculators/       # Mühendislik hesaplayıcıları
-│   └── simulations/       # Fizik motoru simülasyonları
+├── 📂 analysis/           # 🧪 Simülasyon ve Hesaplamalar
+│   ├── calculators/       # Uydu görünürlük ve link hesapları
+│   └── simulations/       # Stewart platformu ve takip simülasyonu
 ├── 📂 src/                # 🧠 Ana Yazılım
-│   ├── ground_station.py  # Yer istasyonu çekirdeği
-│   └── telemetry.py       # Protokol ayrıştırıcı
+│   ├── hardware/          # Motor ve Sensör sürücüleri
+│   ├── gui_app.py         # Yer kontrol arayüzü
+│   ├── kinematics.py      # Koordinat dönüşüm motoru
+│   └── stabilization.py   # PID ve kontrol döngüsü
 ├── 📂 docs/               # 📚 Teknik Dokümanlar
-└── 📄 requirements.txt    # 📦 Proje Gereksinimleri
+└── 📄 requirements.txt    # 📦 Bağımlılıklar
 ```
 
 ---
