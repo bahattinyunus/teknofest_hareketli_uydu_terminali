@@ -1,3 +1,4 @@
+import time
 from .kinematics import SOTMKinematics
 from .sensor_fusion import SOTMSensorFusion
 
@@ -66,7 +67,7 @@ class SOTMStabilizer:
             dt: Optional time step
             
         Returns:
-            tuple: (az_command, el_command) to the motor drivers.
+            dict: Comprehensive state data for telemetry and logging.
         """
         # 1. Filter the orientation
         roll, pitch = self.fusion.process(roll_raw, pitch_raw)
@@ -75,10 +76,23 @@ class SOTMStabilizer:
         target_az, target_el = self.kinematics.get_antenna_angles(roll, pitch, yaw)
         
         # 3. Run PID to get motor correction
-        az_output = self.pid_az.update(target_az, feedback_az, dt)
-        el_output = self.pid_el.update(target_el, feedback_el, dt)
+        az_cmd = self.pid_az.update(target_az, feedback_az, dt)
+        el_cmd = self.pid_el.update(target_el, feedback_el, dt)
         
-        return az_output, el_output
+        # 4. Return full status
+        return {
+            "roll": roll,
+            "pitch": pitch,
+            "yaw": yaw,
+            "target_az": target_az,
+            "target_el": target_el,
+            "actual_az": feedback_az,
+            "actual_el": feedback_el,
+            "az_cmd": az_cmd,
+            "el_cmd": el_cmd,
+            "az_error": target_az - feedback_az,
+            "el_error": target_el - feedback_el
+        }
 
 if __name__ == "__main__":
     # Integration test snippet
@@ -86,5 +100,5 @@ if __name__ == "__main__":
     
     # Simulate a movement
     # Platform tilts 5 degrees roll
-    az_cmd, el_cmd = stabilizer.update(roll=5.0, pitch=0, yaw=0, feedback_az=180, feedback_el=30)
-    print(f"Az Command: {az_cmd:.2f}, El Command: {el_cmd:.2f}")
+    state = stabilizer.update(roll_raw=5.0, pitch_raw=0, yaw=0, feedback_az=180, feedback_el=30)
+    print(f"Az Command: {state['az_cmd']:.2f}, El Command: {state['el_cmd']:.2f}")

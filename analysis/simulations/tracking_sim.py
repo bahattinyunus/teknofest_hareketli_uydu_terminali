@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'
 from src.kinematics import SOTMKinematics
 from src.stabilization import SOTMStabilizer
 
-def run_verification_sim(duration=10.0, step=0.02):
+def run_verification_sim(duration=10.0, step=0.02, headless=False):
     """
     Simulates the platform movement and measures tracking error.
     """
@@ -18,10 +18,11 @@ def run_verification_sim(duration=10.0, step=0.02):
     
     # Initial state
     current_az, current_el = target_az, target_el
-    errors = []
+    log_data = []
     
-    print(f"Starting Simulation: Target Az={target_az}, El={target_el}")
-    print("-" * 50)
+    if not headless:
+        print(f"Starting Simulation: Target Az={target_az}, El={target_el}")
+        print("-" * 50)
     
     for t in np.arange(0, duration, step):
         # Platform motion (Stewart platform envelope: ±8 degrees)
@@ -29,39 +30,48 @@ def run_verification_sim(duration=10.0, step=0.02):
         pitch = 8.0 * np.cos(2 * np.pi * t / 10.0)
         yaw = 0.0
         
-        # Stabilizer update (PID)
-        az_cmd, el_cmd = stabilizer.update(roll, pitch, yaw, current_az, current_el, dt=step)
+        # Stabilizer update (returns state dict)
+        state = stabilizer.update(roll, pitch, yaw, current_az, current_el, dt=step)
         
         # Update current position (Simple integrator simulation)
-        current_az += az_cmd
-        current_el += el_cmd
+        current_az += state["az_cmd"]
+        current_el += state["el_cmd"]
         
-        # Calculate Ideal Target for this moment
-        ideal_az, ideal_el = stabilizer.kinematics.get_antenna_angles(roll, pitch, yaw)
+        # Logging for analysis
+        log_entry = {
+            "timestamp": t,
+            "roll": roll,
+            "pitch": pitch,
+            "actual_az": current_az,
+            "actual_el": current_el,
+            "target_az": state["target_az"],
+            "target_el": state["target_el"],
+            "az_error": state["az_error"],
+            "el_error": state["el_error"]
+        }
+        log_data.append(log_entry)
         
-        # Tracking Error
-        err_az = abs(ideal_az - current_az)
-        err_el = abs(ideal_el - current_el)
-        if err_az > 180: err_az = abs(err_az - 360)
-        
-        total_err = np.sqrt(err_az**2 + err_el**2)
-        errors.append(total_err)
-        
-        if int(t/step) % 50 == 0:
-            print(f"T={t:.2f}s | Roll={roll:5.2f}° | Ideal Az={ideal_az:6.2f} | Current Az={current_az:6.2f} | Error={total_err:5.4f}°")
+        if not headless and int(t/step) % 50 == 0:
+            print(f"T={t:.2f}s | Roll={roll:5.2f}° | Ideal Az={state['target_az']:6.2f} | Current Az={current_az:6.2f} | Error={np.sqrt(state['az_error']**2 + state['el_error']**2):5.4f}°")
 
-    avg_error = np.mean(errors)
-    max_error = np.max(errors)
+    # Save to CSV for CI/CD 'Gökbörü Guardian'
+    import pandas as pd
+    df = pd.DataFrame(log_data)
+    df.to_csv("mission_log.csv", index=False)
     
-    print("-" * 50)
-    print(f"Simulation Complete over {duration}s")
-    print(f"Average Tracking Error: {avg_error:.6f}°")
-    print(f"Maximum Tracking Error: {max_error:.6f}°")
+    max_error = np.sqrt(df['az_error']**2 + df['el_error']**2).max()
     
-    if max_error < 0.5:
-        print("VERIFICATION SUCCESS: Tracking error is within Teknofest limits (< 0.5°)")
-    else:
-        print("VERIFICATION FAILED: Maximum error exceeds 0.5°")
+    if not headless:
+        print("-" * 50)
+        print(f"Simulation Complete. Log saved to mission_log.csv")
+        print(f"Maximum Tracking Error: {max_error:.6f}°")
+    
+    return max_error
 
 if __name__ == "__main__":
-    run_verification_sim()
+    is_headless = "--headless" in sys.argv
+    max_err = run_verification_sim(headless=is_headless)
+    if max_err > 0.5:
+        sys.exit(1)
+    else:
+        sys.exit(0)

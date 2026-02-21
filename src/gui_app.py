@@ -89,7 +89,12 @@ class SOTMDashboard(QMainWindow):
             filename = f"mission_log_{int(time.time())}.csv"
             self.log_file = open(filename, 'w', newline='')
             self.csv_writer = csv.writer(self.log_file)
-            self.csv_writer.writerow(['timestamp', 'roll', 'pitch', 'az_err', 'el_err'])
+            # Expanded SoTM Header
+            self.csv_writer.writerow([
+                'timestamp', 'roll', 'pitch', 'yaw', 
+                'actual_az', 'actual_el', 'target_az', 'target_el',
+                'az_error', 'el_error'
+            ])
             self.logging_enabled = True
             self.log_btn.setText("Stop Logging")
         else:
@@ -103,21 +108,24 @@ class SOTMDashboard(QMainWindow):
         current_az = self.az_motor.get_angle()
         current_el = self.el_motor.get_angle()
         
-        # 2. Run Stabilizer (now includes Kalman Filter)
-        az_cmd, el_cmd = self.stabilizer.update(roll_raw, pitch_raw, yaw, current_az, current_el, dt=0.02)
+        # 2. Run Stabilizer (returns state dict)
+        state = self.stabilizer.update(roll_raw, pitch_raw, yaw, current_az, current_el, dt=0.02)
         
         # 3. Update Hardware
-        self.hal.update_antenna(az_cmd, el_cmd)
+        self.hal.update_antenna(state["az_cmd"], state["el_cmd"])
         
-        # 4. Filtered values for UI (get them from stabilizer)
-        roll_filt, pitch_filt = self.stabilizer.fusion.process(roll_raw, pitch_raw)
-        
-        # 5. Logging
+        # 4. Logging
         if self.logging_enabled:
-            self.csv_writer.writerow([time.time(), roll_filt, pitch_filt, az_cmd, el_cmd])
+            self.csv_writer.writerow([
+                time.time(), 
+                state["roll"], state["pitch"], state["yaw"],
+                state["actual_az"], state["actual_el"],
+                state["target_az"], state["target_el"],
+                state["az_error"], state["el_error"]
+            ])
         
-        # 6. Update UI
-        self.update_plots(roll_filt, pitch_filt, az_cmd, el_cmd)
+        # 5. Update UI
+        self.update_plots(state["roll"], state["pitch"], state["az_error"], state["el_error"])
 
     def update_plots(self, roll, pitch, az_err, el_err):
         self.data_roll[:-1] = self.data_roll[1:]

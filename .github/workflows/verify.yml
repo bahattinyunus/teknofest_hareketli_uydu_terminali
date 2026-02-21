@@ -22,7 +22,25 @@ jobs:
     - name: Run Tests
       run: |
         pytest tests/
-    - name: Run Tracking Simulation
+    - name: Run Tracking Simulation & Log
       run: |
-        # Ensure sim runs without errors (even if headless)
-        python analysis/simulations/tracking_sim.py
+        python analysis/simulations/tracking_sim.py --headless
+        # Assuming tracking_sim outputs a mission_log.csv
+    
+    - name: Gökbörü Guardian - Performance Audit
+      run: |
+        # Use our performance analysis tool to verify the log
+        # If the tool exits with non-zero or we find "NON-COMPLIANT" in output, fail the build.
+        python analysis/simulations/performance_stats.py mission_log.csv > performance_report.txt
+        cat performance_report.txt
+        if grep -q "NON-COMPLIANT" performance_report.txt; then
+          echo "❌ GÖKBÖRÜ GUARDIAN: PERFORMANCE THRESHOLD VIOLATED!"
+          exit 1
+        fi
+        echo "✅ GÖKBÖRÜ GUARDIAN: PERFORMANCE WITHIN LIMITS."
+
+    - name: Upload Performance Report
+      uses: actions/upload-artifact@v3
+      with:
+        name: gokboru-performance-report
+        path: performance_report.txt
