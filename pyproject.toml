@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gokboru_sotm"
+version = "1.0.0"
+description = "Teknofest 2026 Mobile Satellite Terminal Stabilization System"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    { name = "Bahattin Yunus", email = "bahattinyunus@example.com" }
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"

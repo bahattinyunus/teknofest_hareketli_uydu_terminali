@@ -1,49 +1,46 @@
-import math
+import numpy as np
 
-def calculate_fspl(distance_km, frequency_mhz):
+def calculate_link_budget(frequency_ghz, distance_km, tx_power_dbm, tx_gain_dbi, rx_gain_dbi, loss_db=2.0):
     """
-    Calculates Free Space Path Loss (FSPL) in dB.
+    Calculates the Link Budget using the Friis Transmission Equation.
+    
+    Args:
+        frequency_ghz: Carrier frequency (e.g., 12.5 for Ku-band)
+        distance_km: Distance to satellite (e.g., 35786 for GEO)
+        tx_power_dbm: Terminal transmit power
+        tx_gain_dbi: Terminal antenna gain
+        rx_gain_dbi: Satellite antenna gain
+        loss_db: Atmospheric and cable losses
+        
+    Returns:
+        dict: RSSI (Received Signal Strength) and Margin
     """
-    return 20 * math.log10(distance_km) + 20 * math.log10(frequency_mhz) + 32.44
-
-def calculate_link_margin(tx_power_dbm, tx_gain_dbi, rx_gain_dbi, rx_sensitivity_dbm, distance_km, frequency_mhz, cable_loss_db=2.0):
-    """
-    Calculates the link margin.
-    """
-    fspl = calculate_fspl(distance_km, frequency_mhz)
+    # 1. Free Space Path Loss (FSPL)
+    # FSPL = 20*log10(d) + 20*log10(f) + 92.45
+    fspl = 20 * np.log10(distance_km) + 20 * np.log10(frequency_ghz) + 92.45
     
-    # EIRP = Tx Power + Tx Gain - Cable Loss
-    eirp = tx_power_dbm + tx_gain_dbi - cable_loss_db
+    # 2. Received Power (Pr)
+    pr = tx_power_dbm + tx_gain_dbi + rx_gain_dbi - fspl - loss_db
     
-    # Received Power = EIRP + Rx Gain - FSPL
-    rx_power = eirp + rx_gain_dbi - fspl
-    
-    # Link Margin = Received Power - Rx Sensitivity
-    margin = rx_power - rx_sensitivity_dbm
-    
-    return margin, fspl, rx_power
+    return {
+        "Frequency (GHz)": frequency_ghz,
+        "FSPL (dB)": fspl,
+        "Received Power (dBm)": pr,
+        "Status": "Link OK" if pr > -120 else "Link Failure"
+    }
 
 if __name__ == "__main__":
-    print("--- Link Budget Calculator ---")
-    try:
-        freq = float(input("Frequency (MHz): "))
-        dist = float(input("Distance (km): "))
-        tx_pwr = float(input("Tx Power (dBm): "))
-        tx_gain = float(input("Tx Antenna Gain (dBi): "))
-        rx_gain = float(input("Rx Antenna Gain (dBi): "))
-        rx_sens = float(input("Rx Sensitivity (dBm): "))
-        
-        margin, fspl, rx_pwr = calculate_link_margin(tx_pwr, tx_gain, rx_gain, rx_sens, dist, freq)
-        
-        print(f"\nResults:")
-        print(f"  FSPL: {fspl:.2f} dB")
-        print(f"  Received Power: {rx_pwr:.2f} dBm")
-        print(f"  Link Margin: {margin:.2f} dB")
-        
-        if margin > 0:
-            print("  Status: LINK CLOSES (Good)")
+    print("--- GÖKBÖRÜ SOTM Link Budget Pro ---")
+    # Example for Ku-Band Satellite Link (GEO)
+    result = calculate_link_budget(
+        frequency_ghz=12.5, 
+        distance_km=36000, 
+        tx_power_dbm=40,   # 10W
+        tx_gain_dbi=35,    # 45cm Dish
+        rx_gain_dbi=30     # Satellite RX
+    )
+    for k, v in result.items():
+        if isinstance(v, float):
+            print(f"{k}: {v:.2f}")
         else:
-            print("  Status: LINK FAILS (Insufficient Margin)")
-            
-    except ValueError:
-        print("Invalid input. Please enter numeric values.")
+            print(f"{k}: {v}")

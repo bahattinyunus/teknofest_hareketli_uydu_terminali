@@ -1,5 +1,7 @@
 import sys
 import numpy as np
+import csv
+import time
 from PyQt6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget, QLabel, QPushButton, QComboBox
 from PyQt6.QtCore import QTimer
 import pyqtgraph as pg
@@ -21,6 +23,11 @@ class SOTMDashboard(QMainWindow):
         self.hal = HardwareAbstrationLayer(self.az_motor, self.el_motor, self.sensors)
         self.stabilizer = SOTMStabilizer(target_az=180.0, target_el=30.0)
         
+        # Logging
+        self.logging_enabled = False
+        self.log_file = None
+        self.csv_writer = None
+
         self.init_ui()
         
         # Timer for control loop (50Hz)
@@ -44,8 +51,9 @@ class SOTMDashboard(QMainWindow):
         self.status_label = QLabel("Mode: AUTO | Target: Türksat 4B")
         control_panel.addWidget(self.status_label)
         
-        toggle_btn = QPushButton("Toggle Manual/Auto")
-        control_panel.addWidget(toggle_btn)
+        self.log_btn = QPushButton("Start Logging")
+        self.log_btn.clicked.connect(self.toggle_logging)
+        control_panel.addWidget(self.log_btn)
         
         main_layout.addLayout(control_panel)
         
@@ -76,20 +84,40 @@ class SOTMDashboard(QMainWindow):
         self.data_az_err = np.zeros(self.buf_size)
         self.data_el_err = np.zeros(self.buf_size)
 
+    def toggle_logging(self):
+        if not self.logging_enabled:
+            filename = f"mission_log_{int(time.time())}.csv"
+            self.log_file = open(filename, 'w', newline='')
+            self.csv_writer = csv.writer(self.log_file)
+            self.csv_writer.writerow(['timestamp', 'roll', 'pitch', 'az_err', 'el_err'])
+            self.logging_enabled = True
+            self.log_btn.setText("Stop Logging")
+        else:
+            self.logging_enabled = False
+            self.log_file.close()
+            self.log_btn.setText("Start Logging")
+
     def control_loop(self):
         # 1. Read Sensors
-        roll, pitch, yaw = self.sensors.get_orientation()
+        roll_raw, pitch_raw, yaw = self.sensors.get_orientation()
         current_az = self.az_motor.get_angle()
         current_el = self.el_motor.get_angle()
         
-        # 2. Run Stabilizer
-        az_cmd, el_cmd = self.stabilizer.update(roll, pitch, yaw, current_az, current_el)
+        # 2. Run Stabilizer (now includes Kalman Filter)
+        az_cmd, el_cmd = self.stabilizer.update(roll_raw, pitch_raw, yaw, current_az, current_el, dt=0.02)
         
         # 3. Update Hardware
         self.hal.update_antenna(az_cmd, el_cmd)
         
-        # 4. Update UI
-        self.update_plots(roll, pitch, az_cmd, el_cmd)
+        # 4. Filtered values for UI (get them from stabilizer)
+        roll_filt, pitch_filt = self.stabilizer.fusion.process(roll_raw, pitch_raw)
+        
+        # 5. Logging
+        if self.logging_enabled:
+            self.csv_writer.writerow([time.time(), roll_filt, pitch_filt, az_cmd, el_cmd])
+        
+        # 6. Update UI
+        self.update_plots(roll_filt, pitch_filt, az_cmd, el_cmd)
 
     def update_plots(self, roll, pitch, az_err, el_err):
         self.data_roll[:-1] = self.data_roll[1:]

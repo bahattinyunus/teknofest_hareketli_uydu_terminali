@@ -1,0 +1,22 @@
+{
+    "stabilization": {
+        "kp": 0.15,
+        "ki": 0.01,
+        "kd": 0.002,
+        "sample_rate_hz": 50
+    },
+    "terminal": {
+        "antenna_diameter_cm": 45,
+        "max_weight_kg": 20,
+        "voltage_range": [5, 36]
+    },
+    "default_target": {
+        "name": "Türksat 4B",
+        "azimuth_deg": 180.0,
+        "elevation_deg": 30.0
+    },
+    "filters": {
+        "kalman_process_noise": 0.005,
+        "kalman_measure_noise": 0.05
+    }
+}

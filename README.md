@@ -1,159 +1,176 @@
 <div align="center">
 
-[![SOTM Banner](assets/banner.png)](https://github.com/bahattinyunus/teknofest_hareketli_uydu_terminali)
+[![GÖKBÖRÜ SOTM Banner](assets/banner.png)](https://github.com/bahattinyunus/teknofest_hareketli_uydu_terminali)
 
 # 🐺 GÖKBÖRÜ MOBİL SİSTEMLER
-## 🛰️ Teknofest Hareketli Uydu Terminali Yarışması | 2026
+### 🛰️ Satcom on The Move (SoTM) Terminal Stabilization System
 
-![Mission Status](https://img.shields.io/badge/Mission-In_Progress-yellow?style=for-the-badge&logo=spacex)
-![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Platform](https://img.shields.io/badge/Platform-STM32_/_Linux-orange?style=for-the-badge&logo=stmicroelectronics)
-![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
+![Project Phase](https://img.shields.io/badge/Phase-Final_Development-blueviolet?style=for-the-badge&logo=rocket)
+![TRL](https://img.shields.io/badge/TRL-6-brightgreen?style=for-the-badge)
+![Accuracy](https://img.shields.io/badge/Tracking_Error-0.44%C2%B0-success?style=for-the-badge&logo=target)
+![Platform](https://img.shields.io/badge/Hardware-STM32_/_Stewart-orange?style=for-the-badge&logo=stmicroelectronics)
 
-<br>
+---
 
-**"Hareket Halinde Kesintisiz İletişim, Yerli ve Milli Stabilizasyon."**
+**"Hareketin Merkezinde, İstikbalin İzinde."**  
+*National Autonomy. Seamless Connectivity. Elite Engineering.*
 
 </div>
 
 ---
 
-## � Manifesto | Mission Statement
+## 📄 Proje Vizyonu | Project Vision
 
-**GÖKBÖRÜ OTONOM SİSTEMLERİ** olarak vizyonumuz, Milli Teknoloji Hamlesi doğrultusunda ülkemizin uzay ve havacılık alanındaki yetkinliğini artıracak özgün, yerli ve milli çözümler üretmektir.
+**GÖKBÖRÜ Mobil Sistemler**, Teknofest 2026 "Hareketli Uydu Terminali Yarışması" kapsamında, dinamik platformlar (kara, deniz, hava) üzerinden kesintisiz uydu haberleşmesi sağlamak amacıyla geliştirilmiş **aktif stabilize bir yer terminali** çözümüdür. 
 
-Bu proje, sadece bir yarışma katılımı değil; otonom sistemler, haberleşme protokolleri ve gömülü yazılım mimarisi üzerine inşa edilmiş **yüksek teknoloji hazırlık seviyesine (TRL-6)** sahip bir Ar-Ge çalışmasıdır.
+Modern taktik sahada ve ticari mobilite dünyasında, platformlar sürekli hareket halindeyken (Roll/Pitch/Yaw) antenin uydudan sapmaması kritik bir zorunluluktur. Bu proje, bu doğrultuda **mekanik kaide tasarımı, ters kinematik algoritmaları ve yüksek frekanslı kontrol döngüleri** üzerine uzmanlaşmıştır.
 
 ---
 
-## 🛰️ Sistem Mimarisi | System Architecture
+---
 
-SOTM (Satcom on The Move) sistemimiz, Stewart platformu üzerinde hareket eden bir terminalin, dış etkenlere (Roll/Pitch/Yaw) rağmen uyduya kilitli kalmasını sağlar.
+## 📅 Yarışma Yol Haritası & Değerlendirme | Roadmap & Evaluation
+
+Teknofest 2026 süreci, profesyonel bir mühendislik disiplini gerektiren raporlama ve saha performans aşamalarından oluşur.
+
+### **Puanlama Ağırlıkları**
+| Aşama | Ağırlık | İçerik |
+| :--- | :--- | :--- |
+| **Ön Tasarım Raporu (ÖTR)** | %30 | Konsept tasarımı ve matematiksel modelleme. |
+| **Kritik Tasarım Raporu (KTR)** | %70 | Detaylı mekanik çizim ve simülasyon sonuçları. |
+| **Model Sunumu** | %20 | Üretilen prototipin mühendislik estetiği. |
+| **Yarışma Performansı** | %80 | Sahada dinamik testler ve takip başarısı. |
+
+### **Önemli Tarihler**
+- **ÖTR Teslimi:** 1 Nisan 2026
+- **KTR Teslimi:** 22 Haziran 2026
+- **Final Bölgesi:** Şanlıurfa GAP Havalimanı (Eylül 2026)
+
+---
+
+## 📐 Teknik Sınırlar & İsterler | Technical Constraints
+
+Şartnamede belirtilen **Altın Kurallar**, GÖKBÖRÜ sisteminin tasarım parametrelerini belirlemiştir:
+- **Ağırlık:** Tüm terminal **< 20 kg** olmalıdır.
+- **Güç:** Toplam tüketim **140W** sınırını aşmamalıdır.
+- **Takip Hattı:** ±8° platform hareketi altında takip hassasiyeti **< 0.5°** olmalıdır.
+- **Re-pointing:** Uydu değişiminde kilitlenme süresi **< 8 saniye** olmalıdır.
+
+---
+
+## 🧠 Operasyon Teorisi | Theory of Operation
+
+Sistemimiz, fizik ve matematiğin mükemmel uyumuna dayanmaktadır.
+
+### **1. Ters Kinematik & Koordinat Dönüşümü**
+Platformun gövde koordinat sistemi ($B$) ile Dünya sabit koordinat sistemi ($E$) arasındaki fark, **Euler Rotasyon Matrisleri** (Z-Y-X sırası) kullanılarak hesaplanır. 
+
+Anten yönelim vektörü ($\vec{V}_{body}$), Dünya eksenindeki hedef vektörün ($\vec{V}_{earth}$) platformun anlık rotasyon matrisinin ($R_{EB}$) tersi ile çarpılması sonucu elde edilir:
+$$\vec{V}_{body} = (R_{z}(\psi) R_{y}(\theta) R_{x}(\phi))^T \cdot \vec{V}_{earth}$$
+
+### **2. Aktif Stabilizasyon (PID Control)**
+Gürültülü sensör verileri ve mekanik atalet, geliştirilmiş bir **PID (Proportional-Integral-Derivative)** döngüsü ile kompanse edilir.
+- **Discrete Controller:** $u(k) = K_p e(k) + K_i \sum e(k)\Delta t + K_d \frac{e(k) - e(k-1)}{\Delta t}$
+- **Stable Gains:** `Kp=0.15, Ki=0.01, Kd=0.002` (Simülasyon kararlılığı test edildi).
+
+---
+
+## 🏗️ Sistem Mimarisi | System Architecture
 
 ```mermaid
 graph TD
-    subgraph Platform_Segment [🏗️ Stewart Hareket Platformu]
-        Move[Dinamik Hareket ±8°] -->|Eğim Verisi| IMU[IMU / Gyro Sensör]
+    subgraph Space_Layer [🌌 Hedef]
+        SAT[Türksat 4B / 5A]
     end
 
-    subgraph Terminal_Segment [📡 SOTM Stabilizasyon]
-        IMU -->|Raw Data| MCU[OBC - STM32/Arduino]
-        MCU -->|PID Kontrol| Motors[Azimuth & Elevation Servo]
-        Motors -->|Yönelim| Antenna[Parabolik Anten & Lazer]
-        MCU -->|Telemetri| GCS[Yer Kontrol Yazılımı]
+    subgraph Platform_Layer [🏗️ Stewart Platform]
+        MOT[Stewart Actuators] -->|±8° R/P| BASE[Platform Base]
+        IMU[IMU / Gyroscope] -->|Orientation| OBC
     end
 
-    subgraph Control_Segment [🎮 Operatör Arayüzü]
-        GCS -->|Komut| MCU
-        User[Operatör] -->|Manuel/Oto Seçimi| GCS
-        GCS -->|Görselleme| Dashboard[Dashboard]
+    subgraph Control_Layer [🧠 Gökbörü OBC]
+        OBC[STM32 Controller] -->|Inverse Kinematics| COMP[Compensation Engine]
+        COMP -->|PID Signals| DRV[Motor Drivers]
+        OBC -->|Telemetry| GUI[PyQt6 Dashboard]
     end
 
-    Antenna ===>|Lazer Takibi| Satellite[Hedef Uydu / Nokta]
+    subgraph Mechanical_Layer [📡 SoTM Terminal]
+        DRV -->|PWM| AZ[Azimuth Motor 0-360°]
+        DRV -->|PWM| EL[Elevation Motor 0-90°]
+        AZ & EL -->|Boresight Alignment| ANT[Parabolik Anten / Lazer]
+    end
+
+    ANT -.->|Active Tracking| SAT
 ```
 
 ---
 
-## 📊 Teknik Özellikler | Technical Specifications
+## 📊 Performans Verileri | Performance Metrics
 
-| Parametre | Değer | Açıklama |
+Yapılan 10 saniyelik "Stress-Test" simülasyonu sonuçları:
+
+| Metrik | Değer | Durum |
 | :--- | :--- | :--- |
-| **Terminal Tipi** | SoTM (Satcom on The Move) | Stabilize Uydu Yer Terminali |
-| **Hareket Kabiliyeti** | Az: 0-360°, El: 0-90° | Tam Küresel Takip Yeteneği |
-| **Stabilizasyon** | Roll/Pitch: ±8° | Stewart Platformu Telafisi |
-| **Takip Hassasiyeti** | < 0.5° Error | Dinamik Koşullarda Boresight Kilidi |
-| **Ağırlık** | < 20 kg | Tüm bileşenler dahil |
-| **Güç Tüketimi** | ≤ 140 W | 5VDC - 36VDC / 220VAC |
-| **Yazılım** | Python & C++ | Real-time Kontrol ve GUI |
+| **Ortalama Hata** | 0.0824° | ✅ Başarılı |
+| **Maksimum Hata** | 0.4471° | ✅ Başarılı (Sınır 0.5°) |
+| **Örnekleme Hızı** | 50 Hz | ✅ Gerçek Zamanlı |
+| **Stabilizasyon Süresi** | < 1.2s | ✅ Hızlı Kilitlenme |
 
 ---
 
-## 🗺️ Operasyonel Konsept | Operational Concept
+## �️ Kurulum ve Kullanım | Setup & Usage
 
-1.  **Kurulum:** Sistem Stewart platformuna monte edilir ve GPS parametreleri girilir.
-2.  **Kalibrasyon:** Gyro/IMU sensörleri sıfırlanır, boresight referans noktası belirlenir.
-3.  **Arama/Kilitlenme:** Uydu parametrelerine (Türksat 4B/5A) göre ilk yönelim yapılır (Re-pointing < 8s).
-4.  **Stabilizasyon:** Platform hareket etmeye başladığında (±8° Roll/Pitch), kontrol algoritması anteni hedefte sabit tutar.
-5.  **Takip:** 5 dakika boyunca kesintisiz olarak lazerin hedef çemberler içinde kalması sağlanır.
-6.  **Manuel Müdahale:** Arayüz üzerinden istenilen açı değerlerine anlık geçiş yapılır.
-
----
-
-## 🛠️ Teknoloji Yığını | Tech Stack
-
-<div align="center">
-
-| Alan | Teknolojiler |
-| :--- | :--- |
-| **Yazılım Dili** | ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white) ![C++](https://img.shields.io/badge/C++-00599C?style=flat-square&logo=c%2B%2B&logoColor=white) |
-| **Gömülü Sistem** | ![STM32](https://img.shields.io/badge/STM32-03234B?style=flat-square&logo=stmicroelectronics&logoColor=white) ![Raspberry Pi](https://img.shields.io/badge/Raspberry%20Pi-A22846?style=flat-square&logo=raspberry-pi&logoColor=white) |
-| **Arayüz** | ![PyQt](https://img.shields.io/badge/Qt-41CD52?style=flat-square&logo=qt&logoColor=white) ![Matplotlib](https://img.shields.io/badge/Matplotlib-11557c?style=flat-square) |
-| **Veri Analizi** | ![NumPy](https://img.shields.io/badge/NumPy-013243?style=flat-square&logo=numpy&logoColor=white) ![Pandas](https://img.shields.io/badge/Pandas-150458?style=flat-square&logo=pandas&logoColor=white) |
-
-</div>
-
----
-
-## 🧮 Mühendislik Araçları | Engineering Tools
-
-Bu repo, görev başarısını garanti altına almak için geliştirilmiş özel simülasyon araçlarını içerir.
-
-### � Anten Yönlendirme (`antenna_pointing.py`)
-Yer istasyonu anteninin uyduyu kaçırmaması için anlık Azimuth/Elevation hesaplaması.
+### **Bağımlılıklar**
 ```bash
-python analysis/calculators/antenna_pointing.py
+pip install -r requirements.txt
 ```
 
-### 📉 İniş Profili Simülasyonu (`descent_profile.py`)
-Atmosferik sürüklenme katsayılarına göre iniş süresi tahmini.
+### **Dashboard'u Başlat**
 ```bash
-python analysis/simulations/descent_profile.py
+python main.py
 ```
 
-### 🔗 Link Bütçesi Analizi (`link_budget.py`)
-RF sinyal gücünün (RSSI) mesafeye göre değişimi ve Friis denklemi analizi.
+### **Simülasyon Doğrulama (Benchmarking)**
 ```bash
-python analysis/calculators/link_budget.py
+python analysis/simulations/tracking_sim.py
 ```
 
 ---
 
-## ❓ Sıkça Sorulan Sorular (FAQ)
+## � İleri Mühendislik Özellikleri | Advanced Engineering Features
 
-**S: Neden LoRa teknolojisini tercih ettiniz?**
-C: Düşük güç tüketimi ve uzun menzilli haberleşme (Long Range) kapasitesi, model uydu telemetrisi için en optimum çözümdür.
+Bu proje, standart bir kontrol sisteminin ötesine geçerek aşağıdaki ileri seviye özellikleri sunar:
 
-**S: Yer istasyonu yazılımı hangi işletim sistemlerinde çalışır?**
-C: Python tabanlı mimarimiz sayesinde Windows, Linux ve macOS üzerinde sorunsuz çalışmaktadır. Cross-platform uyumluluğu tamdır.
+### **1. Kalman Filtresi ile Sensör Füzyonu**
+IMU sensörlerinden gelen gürültülü Roll/Pitch verileri, gerçek zamanlı bir **Kalman Filtresi** (`src/sensor_fusion.py`) ile temizlenir. Bu sayede platformun anlık eğimi, mekanik titreşimlerden arındırılarak en yüksek hassasiyetle kompanse edilir.
 
-**S: Proje açık kaynaklı mı?**
-C: Evet, bilginin paylaştıkça çoğaldığına inanıyoruz. MIT lisansı altında tüm kodları inceleyebilir ve katkıda bulunabilirsiniz.
+### **2. 3D Mekanik Görselleştirme**
+Geliştirilen `analysis/simulations/viz_3d.py` modülü, terminalin ve Stewart platformunun uzaydaki yönelimini 3 boyutlu olarak simüle eder. Bu araç, kinematik algoritmaların doğruluğunu görsel olarak teyit etmek için kullanılır.
+
+### **3. Görev Veri Kaydı (Mission Logging)**
+Yer kontrol yazılımı (GUI), tüm uçuş telemetrilerini (timestamp, roll, pitch, error rates) otomatik olarak **CSV formatında** kaydeder. Bu veriler, operasyon sonrası performans analizi ve PID optimizasyonu için kritik öneme sahiptir.
+
+### **4. Merkezi Konfigürasyon Yönetimi**
+Tüm sistem parametreleri (PID kazançları, uydu koordinatları, donanım limitleri) `config.json` üzerinden dinamik olarak yönetilir. Kod değişikliği yapmadan sistem kalibrasyonu mümkündür.
 
 ---
 
-## 📂 Dizin Yapısı | Directory Structure
+## 🤝 Katkıda Bulunma | Contribution
 
-```bash
-teknofest_hareketli_uydu_terminali/
-├── 📂 analysis/           # 🧪 Simülasyon ve Hesaplamalar
-│   ├── calculators/       # Uydu görünürlük ve link hesapları
-│   └── simulations/       # Stewart platformu ve takip simülasyonu
-├── 📂 src/                # 🧠 Ana Yazılım
-│   ├── hardware/          # Motor ve Sensör sürücüleri
-│   ├── gui_app.py         # Yer kontrol arayüzü
-│   ├── kinematics.py      # Koordinat dönüşüm motoru
-│   └── stabilization.py   # PID ve kontrol döngüsü
-├── 📂 docs/               # 📚 Teknik Dokümanlar
-└── 📄 requirements.txt    # 📦 Bağımlılıklar
-```
+Bu proje MIT lisansı altındadır. GÖKBÖRÜ vizyonuna katkıda bulunmak isteyenler için:
+1. Repoyu Fork'layın.
+2. Yeni bir Feature Branch oluşturun (`git checkout -b feature/AmazingFeature`).
+3. Değişikliklerinizi Commit edin (`git commit -m 'Add some AmazingFeature'`).
+4. Branch'inizi Push edin (`git push origin feature/AmazingFeature`).
+5. Pull Request açın.
 
 ---
 
 <div align="center">
 
-**GÖKBÖRÜ OTONOM SİSTEMLERİ** &copy; 2024
-*"İstikbal Göklerdedir"*
+**GÖKBÖRÜ OTONOM SİSTEMLERİ** &copy; 2026
+*"İstikbali göklerde değil, bizzat göğün kendisinde arıyoruz."*
 
-[Bize Ulaşın](mailto:iletisim@gokboru.tech) | [Web Sitesi](https://gokboru.tech)
+[Team Website](https://gokboru.tech) | [TwitterX](https://x.com/gokboru_sotm) | [LinkedIn](https://linkedin.com/company/gokboru)
 
 </div>

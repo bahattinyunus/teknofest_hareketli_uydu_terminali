@@ -1,5 +1,5 @@
-import time
 from .kinematics import SOTMKinematics
+from .sensor_fusion import SOTMSensorFusion
 
 class PID:
     """A simple PID controller."""
@@ -43,6 +43,7 @@ class SOTMStabilizer:
     def __init__(self, target_az=180.0, target_el=45.0):
         self.kinematics = SOTMKinematics()
         self.kinematics.set_target_satellite(target_az, target_el)
+        self.fusion = SOTMSensorFusion() # NEW: Initializing Sensor Fusion
         
         # Separate PIDs for Azimuth and Elevation
         # For a discrete integrator with step 0.02, total gain (Kp + Kd/dt) should be < 1.0
@@ -54,26 +55,29 @@ class SOTMStabilizer:
         self.current_az = 0.0
         self.current_el = 0.0
         
-    def update(self, roll, pitch, yaw, feedback_az, feedback_el, dt=None):
+    def update(self, roll_raw, pitch_raw, yaw, feedback_az, feedback_el, dt=None):
         """
         Runs one iteration of the control loop.
         
         Args:
-            roll, pitch, yaw: From IMU (Body Frame)
-            feedback_az, feedback_el: From motor encoders (Current position)
+            roll_raw, pitch_raw: Raw orientation from sensors
+            yaw: From IMU
+            feedback_az, feedback_el: From motor encoders
             dt: Optional time step
             
         Returns:
             tuple: (az_command, el_command) to the motor drivers.
         """
-        # 1. Get the ideal target angles from kinematics
+        # 1. Filter the orientation
+        roll, pitch = self.fusion.process(roll_raw, pitch_raw)
+        
+        # 2. Get the ideal target angles from kinematics
         target_az, target_el = self.kinematics.get_antenna_angles(roll, pitch, yaw)
         
-        # 2. Run PID to get motor correction
+        # 3. Run PID to get motor correction
         az_output = self.pid_az.update(target_az, feedback_az, dt)
         el_output = self.pid_el.update(target_el, feedback_el, dt)
         
-        # In a real system, these would be velocity or position commands
         return az_output, el_output
 
 if __name__ == "__main__":
