@@ -209,11 +209,17 @@ The 3D kinematic visualizer (`analysis/simulations/viz_3d.py`) has been upgraded
 
 ---
 
-## 📈 Matematiksel Modelleme | Mathematical Modeling
+## 📐 Mathematical & Kinematic Modeling (Elite)
 
-GÖKBÖRÜ terminali, sadece bir takip sistemi değil, uzayın derinliklerine uzanan hassas bir matematiksel köprüdür.
+*A true engineering product replaces basic sine-waves with standardized physical models.*
 
-### **1. 6-DOF Stewart Platform Kinematiği**
+### **ISO 8608 Spectral Terrain Engine**
+Standard simulation envelopes have been upgraded to employ **ISO 8608 Road Surface Profiles**.
+- `analysis/simulations/terrain_generator.py` calculates Power Spectral Densities (PSD) to synthesize Class A (Smooth Tarmac) to Class E (Severe Tactical Off-Road) terrains.
+- Converts spatial frequencies into temporal 6-DOF disturbances (Pitch and Roll) for the Stewart Platform, calculating front-to-rear axle delays based on the vehicle's actual wheelbase and velocity.
+
+### **Reverse Kinematics (Stewart Platform)**
+The platform's orientation matrix ($R$) is derived by multiplying the rotation matrices of the pitch ($\theta$) and roll ($\phi$) axes.
 Mekanik kaidemiz, 6 serbestlik dereceli (DOF) bir **Stewart-Gough** platformu üzerine kurgulanmıştır. Her bir aktüatörün uzunluğu ($L_i$), platformun hedef yönelimine ($T$) ve taban koordinatlarına ($B_i$) göre ters kinematik ile hesaplanır:
 
 $$L_i = \sqrt{\| \vec{P} + R \vec{p}_i - \vec{b}_i \|^2}$$

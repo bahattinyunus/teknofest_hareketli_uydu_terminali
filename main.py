@@ -21,10 +21,11 @@ def main_menu():
         print("8. Run Electronic Warfare (EW) Jamming Simulation")
         print("9. Launch Full-Stack Web Telemetry Dashboard (Streamlit)")
         print("10. Run Edge AI Predictive Maintenance (Vibration Analysis)")
-        print("11. Exit")
+        print("11. Generate ISO 8608 Terrain Kinematics Profile")
+        print("12. Exit")
         print("="*50)
         
-        choice = input("Select an option (1-11): ")
+        choice = input("Select an option (1-12): ")
         
         if choice == '1':
             from src.gui_app import main as launch_gui
@@ -70,6 +71,8 @@ def main_menu():
         elif choice == '10':
             os.system("python analysis/ai_models/vibration_analyzer.py")
         elif choice == '11':
+            os.system("python analysis/simulations/terrain_generator.py")
+        elif choice == '12':
             print("Exiting GÖKBÖRÜ Command Center. İstikbal Göklerdedir!")
             break
         else:

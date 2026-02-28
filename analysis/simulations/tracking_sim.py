@@ -8,13 +8,21 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'
 
 from src.kinematics import SOTMKinematics
 from src.stabilization import SOTMStabilizer
+from analysis.simulations.terrain_generator import ISO8608Terrain
 
 def run_verification_sim(duration=10.0, step=0.02, headless=False):
     """
     Simulates the platform movement and measures tracking error.
+    Utilizes ISO 8608 Class C Terrain (Macadam/Dirt) for realistic mechanical disturbances.
     """
     target_az, target_el = 180.0, 30.0
     stabilizer = SOTMStabilizer(target_az=target_az, target_el=target_el)
+    
+    # Generate Elite ISO 8608 Terrain Profile (40 km/h)
+    if not headless:
+        print("\n🌍 Initializing ISO 8608 Terrain Kinematics...")
+    terrain = ISO8608Terrain(road_class='C', velocity_kph=40.0)
+    terrain_data = terrain.generate_profile(duration=duration, dt=step)
     
     # Initial state
     current_az, current_el = target_az, target_el
@@ -24,10 +32,10 @@ def run_verification_sim(duration=10.0, step=0.02, headless=False):
         print(f"Starting Simulation: Target Az={target_az}, El={target_el}")
         print("-" * 50)
     
-    for t in np.arange(0, duration, step):
-        # Platform motion (Stewart platform envelope: ±8 degrees)
-        roll = 8.0 * np.sin(2 * np.pi * t / 10.0)
-        pitch = 8.0 * np.cos(2 * np.pi * t / 10.0)
+    for idx, t in enumerate(terrain_data['Time']):
+        # Platform motion from ISO 8608 Spectral Terrain
+        roll = terrain_data['Roll'].iloc[idx]
+        pitch = terrain_data['Pitch'].iloc[idx]
         yaw = 0.0
         
         # Stabilizer update (returns state dict)
