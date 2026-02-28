@@ -17,10 +17,11 @@ def main_menu():
         print("4. Run System Unit Tests")
         print("5. Analyze Mission Log (Generate Visual Report)")
         print("6. Launch 3D Dynamic Visualization")
-        print("7. Exit")
+        print("7. Launch Ground Station UDP Protocol Listener")
+        print("8. Exit")
         print("="*50)
         
-        choice = input("Select an option (1-7): ")
+        choice = input("Select an option (1-8): ")
         
         if choice == '1':
             from src.gui_app import main as launch_gui
@@ -50,6 +51,8 @@ def main_menu():
         elif choice == '6':
             os.system("python analysis/simulations/viz_3d.py")
         elif choice == '7':
+            os.system("python analysis/simulations/udp_listener.py")
+        elif choice == '8':
             print("Exiting GÖKBÖRÜ Command Center. İstikbal Göklerdedir!")
             break
         else:

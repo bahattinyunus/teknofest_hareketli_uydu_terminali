@@ -11,8 +11,10 @@
 
 ![Project Phase](https://img.shields.io/badge/Phase-Final_Development-blueviolet?style=for-the-badge&logo=rocket)
 ![TRL](https://img.shields.io/badge/TRL-6-brightgreen?style=for-the-badge)
-![Accuracy](https://img.shields.io/badge/Tracking_Error-0.44%C2%B0-success?style=for-the-badge&logo=target)
-![Platform](https://img.shields.io/badge/Hardware-STM32_/_Stewart-orange?style=for-the-badge&logo=stmicroelectronics)
+![Accuracy](https://img.shields.io/badge/Tracking_Error-<0.45%C2%B0-success?style=for-the-badge&logo=target)
+![CI/CD](https://img.shields.io/badge/CI%2FCD-G%C3%B6kb%C3%B6r%C3%BC_Guardian-000000?style=for-the-badge&logo=githubactions&logoColor=white)
+![Lint](https://img.shields.io/badge/Code_Quality-Ruff-red?style=for-the-badge&logo=python)
+![Docker](https://img.shields.io/badge/Containerized-Yes-2496ED?style=for-the-badge&logo=docker)
 
 ---
 

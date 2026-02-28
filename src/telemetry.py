@@ -86,25 +86,46 @@ class TelemetryParser:
         checksum = self.calculate_checksum(raw_data)
         return raw_data + struct.pack('B', checksum)
 
+class UDPTemetrySender:
+    """
+    Sends serialized TelemetryPacket data over UDP to a Ground Station.
+    """
+    def __init__(self, ip="127.0.0.1", port=1923):
+        import socket
+        self.ip = ip
+        self.port = port
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.parser = TelemetryParser()
+
+    def send(self, packet: TelemetryPacket):
+        try:
+            data = self.parser.serialize(packet)
+            self.sock.sendto(data, (self.ip, self.port))
+        except Exception as e:
+            print(f"UDP Send Error: {e}")
+
+    def close(self):
+        self.sock.close()
+
 if __name__ == "__main__":
-    # Test stub for SoTM Telemetry
-    parser = TelemetryParser()
+    import time
+    # Test stub for UDP Telemetry
+    sender = UDPTemetrySender()
     
-    test_packet = TelemetryPacket(
-        team_id=1923, 
-        packet_count=42, 
-        timestamp=123.456,
-        roll=2.5, pitch=-1.2, yaw=180.0,
-        actual_az=180.5, actual_el=35.2,
-        target_az=180.0, target_el=35.0,
-        rssi=-65.4,
-        state=TerminalState.TRACKING,
-        checksum=0 # Placeholder
-    )
-    
-    serialized = parser.serialize(test_packet)
-    print(f"Serialized ({len(serialized)} bytes): {serialized.hex()}")
-    
-    parsed = parser.parse(serialized)
-    print(f"Parsed Orientation: Roll={parsed.roll}, Pitch={parsed.pitch}")
-    print(f"Parsed Status: State={TerminalState(parsed.state).name}, RSSI={parsed.rssi}")
+    print(f"Sending test packets to {sender.ip}:{sender.port}...")
+    for i in range(5):
+        test_packet = TelemetryPacket(
+            team_id=1923, 
+            packet_count=i, 
+            timestamp=time.time(),
+            roll=2.5, pitch=-1.2, yaw=180.0,
+            actual_az=180.5, actual_el=35.2,
+            target_az=180.0, target_el=35.0,
+            rssi=-65.4,
+            state=TerminalState.TRACKING,
+            checksum=0 
+        )
+        sender.send(test_packet)
+        print(f"Sent Packet #{i}")
+        time.sleep(1)
+    sender.close()
