@@ -19,6 +19,30 @@
 
 ---
 
+## 🌍 Dünyadaki Benzer Yarışmalar ve Kaynak Kodlar | Similar Competitions & Source Codes
+
+Aşağıda, Teknofest Hareketli Uydu Terminali yarışmasına benzerlik gösteren veya bu alanda (yer istasyonu, uydu takibi, otonom anten sistemleri) açık kaynaklı çözümler sunan bazı global yarışmalar ve projeler listelenmiştir:
+
+- **CanSat Competition (International):** Öğrencilerin uydu ve yer istasyonu prototipleri tasarladığı prestijli bir yarışma.
+  - [Satelink Team CanSat Code (Ground Station & Interface)](https://github.com/Satelink/CanSat)
+  - [America CanSat 2024 Ground Control Station](https://github.com/CanSat-America/GCS-2024)
+- **BIRDS-X Project Ground Terminal Competition:** CubeSat'larla iletişim kurmak için yer terminali (Ground Terminal) kurma yarışması.
+  - [BIRDS Project Official Website](https://birds-project.com/)
+- **SatNOGS (Satellite Network Open Ground Station):** Dünyanın en büyük açık kaynaklı uydu yer istasyonu ağı.
+  - [SatNOGS Artifacts (Hardware & Software)](https://gitlab.com/librespacefoundation/satnogs) - Anten çevirici (rotator) tasarımları ve kontrol yazılımları.
+- **NyanSat:** Düşük maliyetli, açık kaynaklı uydu yer istasyonu projesi.
+  - [NyanSat GitHub Repository](https://github.com/RedBalloonShenanigans/NyanSat) - Pan-tilt kafa tasarımı ve IMU destekli takip yazılımı.
+- **AntRunner:** Taşınabilir, DIY anten çevirici ve otomatik uydu takip sistemi.
+  - [AntRunner DIY Rotator](https://github.com/wuxx/AntRunner) - 360° azimuth ve 180° elevation kontrolü.
+- **Open Source Satellite Tracking & Ground Station Projects:**
+  - [ESA pypogs (Automated Satellite Tracker)](https://github.com/esa/pypogs) - Avrupa Uzay Ajansı tarafından geliştirilen otomatik uydu takipçisi.
+  - [UniClOGS (University Class Open Ground Station)](https://github.com/pdxas/uniclogs) - Üniversite seviyesinde açık kaynaklı yer istasyonu çözümü.
+  - [termtrack (ISS & Satellite Tracking in Terminal)](https://github.com/trehn/termtrack) - Terminal üzerinden uydu takibi sağlayan araç.
+  - [Space-Command (CLI Satellite Tracking)](https://github.com/galactics/space-command) - Uydu takibi için komut satırı aracı.
+  - [Satellite Open Source Collection](https://github.com/jwwthu/Satellite-Open-Source) - Uydu haberleşmesi için açık kaynak kod koleksiyonu.
+
+---
+
 ## 📄 Proje Vizyonu | Project Vision
 
 **GÖKBÖRÜ Mobil Sistemler**, Teknofest 2026 "Hareketli Uydu Terminali Yarışması" kapsamında, dinamik platformlar (kara, deniz, hava) üzerinden kesintisiz uydu haberleşmesi sağlamak amacıyla geliştirilmiş **aktif stabilize bir yer terminali** çözümüdür. 
