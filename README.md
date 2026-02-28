@@ -218,6 +218,11 @@ Standard simulation envelopes have been upgraded to employ **ISO 8608 Road Surfa
 - `analysis/simulations/terrain_generator.py` calculates Power Spectral Densities (PSD) to synthesize Class A (Smooth Tarmac) to Class E (Severe Tactical Off-Road) terrains.
 - Converts spatial frequencies into temporal 6-DOF disturbances (Pitch and Roll) for the Stewart Platform, calculating front-to-rear axle delays based on the vehicle's actual wheelbase and velocity.
 
+### **Avionics Subsystem Matrix & C++ Transpiler**
+Bridging the gap between Python R&D and Bare-Metal Hardware.
+- **Kalman Auto-Tuner:** `analysis/calculators/kalman_tuner.py` executes empirical noise sweeps across simulated IMU datasets to mathematically derive the optimal Process ($Q$) and Measurement ($R$) noise variances, minimizing Root Mean Square Error (RMSE).
+- **Embedded C++ Core Generator:** A true aerospace pipeline. `scripts/generate_cpp_core.py` translates the validated Python PID and Kalman Filter logic into deeply embedded, zero-dependency `C++` header files (`GokboruKalman.h`, `GokboruPID.h`). These files are instantly ready to be compiled by `arm-none-eabi-gcc` and flashed to the physical STM32 Cortex-M4 Microcontroller.
+
 ### **Reverse Kinematics (Stewart Platform)**
 The platform's orientation matrix ($R$) is derived by multiplying the rotation matrices of the pitch ($\theta$) and roll ($\phi$) axes.
 Mekanik kaidemiz, 6 serbestlik dereceli (DOF) bir **Stewart-Gough** platformu üzerine kurgulanmıştır. Her bir aktüatörün uzunluğu ($L_i$), platformun hedef yönelimine ($T$) ve taban koordinatlarına ($B_i$) göre ters kinematik ile hesaplanır:

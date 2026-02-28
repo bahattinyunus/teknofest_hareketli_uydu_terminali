@@ -22,10 +22,12 @@ def main_menu():
         print("9. Launch Full-Stack Web Telemetry Dashboard (Streamlit)")
         print("10. Run Edge AI Predictive Maintenance (Vibration Analysis)")
         print("11. Generate ISO 8608 Terrain Kinematics Profile")
-        print("12. Exit")
+        print("12. Run Avionics Kalman Filter Auto-Tuner")
+        print("13. Export Python Logic to Embedded C++ (STM32)")
+        print("14. Exit")
         print("="*50)
         
-        choice = input("Select an option (1-12): ")
+        choice = input("Select an option (1-14): ")
         
         if choice == '1':
             from src.gui_app import main as launch_gui
@@ -73,6 +75,10 @@ def main_menu():
         elif choice == '11':
             os.system("python analysis/simulations/terrain_generator.py")
         elif choice == '12':
+            os.system("python analysis/calculators/kalman_tuner.py")
+        elif choice == '13':
+            os.system("python scripts/generate_cpp_core.py")
+        elif choice == '14':
             print("Exiting GÖKBÖRÜ Command Center. İstikbal Göklerdedir!")
             break
         else:
