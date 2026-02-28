@@ -11,17 +11,26 @@ class KalmanFilter:
         self.x = 0.0                   # Estimated state (angle)
         self.k = 0.0                   # Kalman gain
 
-    def update(self, measurement, dt=None):
+    def update(self, measurement):
         """
-        Updates the filter with a new measurement.
+        Updates the filter with a new measurement from the sensor.
+        Includes GNSS/IMU Anti-Spoofing (Kinematic Plausibility Gate).
         """
-        # Prediction update
-        self.p = self.p + self.q
-        
-        # Measurement update
-        self.k = self.p / (self.p + self.r)
-        self.x = self.x + self.k * (measurement - self.x)
-        self.p = (1 - self.k) * self.p
+        # Anti-Spoofing Check: Physical limit for sudden angular change (e.g., max 10 degrees per frame)
+        MAX_DELTA = 10.0
+        if abs(measurement - self.x) > MAX_DELTA and self.p < 5.0: # Using self.p for uncertainty
+            # Plausibility Gate Failed! Likely a spoofing attack or sensor glitch.
+            # Reject measurement, rely on prediction (Inertial Dead-Reckoning)
+            # We purposely do NOT update self.x with the measurement.
+            return self.x
+
+        # Standard Update (Kalman Gain)
+        # Prediction update for covariance (assuming dt=1 for simplicity or integrated into process_variance)
+        self.p = self.p + self.q # Re-added prediction step for covariance
+
+        kalman_gain = self.p / (self.p + self.r)
+        self.x = self.x + kalman_gain * (measurement - self.x)
+        self.p = (1 - kalman_gain) * self.p
         
         return self.x
 

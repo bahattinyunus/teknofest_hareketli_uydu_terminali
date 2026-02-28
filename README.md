@@ -185,7 +185,13 @@ Geliştirilen `analysis/calculators/pid_optimizer.py` modülü, **Diferansiyel G
 GitHub Actions üzerindeki `verify.yml` iş akışı, her kod değişikliğinde sistemi simülasyona tabi tutar.
 - **Kritik Kontrol:** Eğer simülasyondaki maksimum takip hatası **0.5 dereceyi** aşarsa, CI hattı otomatik olarak başarısız olur ve "Gökbörü Guardian" müdahale ederek hatalı kodun birleşmesini engeller.
 
-### **4. Mission Data Replay System**
+### **4. Electronic Warfare (EW) Resilience & Cyber Security**
+A critical "God-Tier" feature: GÖKBÖRÜ is built to survive contested electromagnetic environments.
+- **RF Ku/Ka-Band Anti-Jamming:** The system automatically switches to *Inertial Dead-Reckoning* when signal strength (RSSI) is saturated by noise jammers.
+- **GNSS/IMU Spoofing Rejection:** The `SOTMSensorFusion` module uses Mahalanobis Distance checks to reject physically impossible orientation jumps injected by spoofers.
+- **Test the Resilience:** The built-in EW Simulator (`analysis/simulations/ew_jammer.py`) executes 4 distinct phases of electronic attacks against the UDP Ground Station stream.
+
+### **5. Mission Data Replay System**
 `src/replay_system.py` ile kaydedilmiş uçuş verileri (binary/CSV) sisteme geri beslenebilir. Bu sayede sahada yaşanan bir takip hatası, laboratuvar ortamında saniye saniye tekrar oynatılarak analiz edilebilir.
 
 ---
