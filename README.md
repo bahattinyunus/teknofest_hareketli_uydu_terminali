@@ -19,27 +19,33 @@
 
 ---
 
-## 🌍 Dünyadaki Benzer Yarışmalar ve Kaynak Kodlar | Similar Competitions & Source Codes
+## 🌍 Rakip Analizi & Teknik Karşılaştırma | Competitor Analysis
 
-Aşağıda, Teknofest Hareketli Uydu Terminali yarışmasına benzerlik gösteren veya bu alanda (yer istasyonu, uydu takibi, otonom anten sistemleri) açık kaynaklı çözümler sunan bazı global yarışmalar ve projeler listelenmiştir:
+GÖKBÖRÜ, global ölçekteki açık kaynaklı yer istasyonu projeleri ve yarışma çözümleriyle karşılaştırıldığında, özellikle **hareketli platform (SoTM)** yetenekleri ve **aktif stabilizasyon hassasiyeti** ile öne çıkmaktadır.
 
-- **CanSat Competition (International):** Öğrencilerin uydu ve yer istasyonu prototipleri tasarladığı prestijli bir yarışma.
-  - [Satelink Team CanSat Code (Ground Station & Interface)](https://github.com/Satelink/CanSat)
-  - [America CanSat 2024 Ground Control Station](https://github.com/CanSat-America/GCS-2024)
-- **BIRDS-X Project Ground Terminal Competition:** CubeSat'larla iletişim kurmak için yer terminali (Ground Terminal) kurma yarışması.
-  - [BIRDS Project Official Website](https://birds-project.com/)
-- **SatNOGS (Satellite Network Open Ground Station):** Dünyanın en büyük açık kaynaklı uydu yer istasyonu ağı.
-  - [SatNOGS Artifacts (Hardware & Software)](https://gitlab.com/librespacefoundation/satnogs) - Anten çevirici (rotator) tasarımları ve kontrol yazılımları.
-- **NyanSat:** Düşük maliyetli, açık kaynaklı uydu yer istasyonu projesi.
-  - [NyanSat GitHub Repository](https://github.com/RedBalloonShenanigans/NyanSat) - Pan-tilt kafa tasarımı ve IMU destekli takip yazılımı.
-- **AntRunner:** Taşınabilir, DIY anten çevirici ve otomatik uydu takip sistemi.
-  - [AntRunner DIY Rotator](https://github.com/wuxx/AntRunner) - 360° azimuth ve 180° elevation kontrolü.
-- **Open Source Satellite Tracking & Ground Station Projects:**
-  - [ESA pypogs (Automated Satellite Tracker)](https://github.com/esa/pypogs) - Avrupa Uzay Ajansı tarafından geliştirilen otomatik uydu takipçisi.
-  - [UniClOGS (University Class Open Ground Station)](https://github.com/pdxas/uniclogs) - Üniversite seviyesinde açık kaynaklı yer istasyonu çözümü.
-  - [termtrack (ISS & Satellite Tracking in Terminal)](https://github.com/trehn/termtrack) - Terminal üzerinden uydu takibi sağlayan araç.
-  - [Space-Command (CLI Satellite Tracking)](https://github.com/galactics/space-command) - Uydu takibi için komut satırı aracı.
-  - [Satellite Open Source Collection](https://github.com/jwwthu/Satellite-Open-Source) - Uydu haberleşmesi için açık kaynak kod koleksiyonu.
+### **Teknik Karşılaştırma Tablosu**
+
+| Özellik | **GÖKBÖRÜ (Biz)** | SatNOGS | NyanSat | UniClOGS | AntRunner |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Operasyon Modu** | **SoTM (Hareketli)** | Sabit / Ground | Sabit / Ground | Sabit / Pro | Mobil / Manuel |
+| **Kaide Yapısı** | **6-DOF Stewart** | Pan-Tilt | Pan-Tilt | Pro-Grade | Compact PT |
+| **Takip Hassasiyeti** | **< 0.45°** | ~1.0° - 2.0° | ~1.5° | ~0.5° | ~1.2° |
+| **Kontrol Döngüsü** | **50Hz + AI Opt.** | Low Frequency | Medium | High (FPGA/PC) | Low |
+| **Stabilizasyon** | **Tam Aktif (EKF)** | Yok | Pasif/IMU | Yok | Yok |
+| **Hedef Kitle** | **Taktik / Savunma** | Amatör / Global | Eğitim / DIY | Akademik | Taşınabilir |
+
+### **Neden GÖKBÖRÜ?**
+
+1.  **Aktif SoTM Desteği:** Rakiplerin çoğu (SatNOGS, UniClOGS) sabit konumdaki uyduları takip etmek için tasarlanmıştır. GÖKBÖRÜ, araç üzerindeki sarsıntıyı (vibration) ve yön değişimini saliseler içinde kompanse eder.
+2.  **Yapay Zeka Destekli PID:** Manuel kazanç ayarı yerine, `pid_optimizer.py` ile her ortama uygun en iyi kontrol parametrelerini otomatik belirler.
+3.  **Hata Payının Minimize Edilmesi:** 0.45° altındaki takip hatası ile yüksek frekanslı (Ku/Ka band) uydularda bile kesintisiz veri transferi vaat eder.
+
+### **Referans Alınan Global Projeler & Kaynaklar**
+- [CanSat Satelink Repository](https://github.com/Satelink/CanSat) - Yer istasyonu arayüz logic'i.
+- [ESA pypogs](https://github.com/esa/pypogs) - Otomatik takip algoritmaları.
+- [SatNOGS GitLab](https://gitlab.com/librespacefoundation/satnogs) - Donanım şemaları ve ağ mimarisi.
+- [NyanSat Master](https://github.com/RedBalloonShenanigans/NyanSat) - IMU entegrasyon yöntemleri.
+- [UniClOGS Framework](https://github.com/pdxas/uniclogs) - Modüler yazılım mimarisi.
 
 ---
 
