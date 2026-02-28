@@ -3,7 +3,11 @@
 [![GÖKBÖRÜ SOTM Banner](assets/banner.png)](https://github.com/bahattinyunus/teknofest_hareketli_uydu_terminali)
 
 # 🐺 GÖKBÖRÜ MOBİL SİSTEMLER
-### 🛰️ Satcom on The Move (SoTM) Terminal Stabilization System
+##<p align="center">
+  <img src="assets/logo.png" width="250" alt="GÖKBÖRÜ SOTM Logo">
+</p>
+
+# 🛰️ GÖKBÖRÜ: Satcom on The Move (SoTM) Terminal Stabilization System
 
 ![Project Phase](https://img.shields.io/badge/Phase-Final_Development-blueviolet?style=for-the-badge&logo=rocket)
 ![TRL](https://img.shields.io/badge/TRL-6-brightgreen?style=for-the-badge)

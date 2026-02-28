@@ -13,9 +13,30 @@ from .hardware_interface import HardwareAbstrationLayer
 class SOTMDashboard(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("GÖKBÖRÜ SOTM Control Station")
-        self.resize(1000, 700)
+        self.setWindowTitle("🐺 GÖKBÖRÜ SOTM Control Station | Elite Edition")
+        self.resize(1100, 800)
         
+        # Apply Premium Dark Theme
+        self.setStyleSheet("""
+            QMainWindow { background-color: #0d1117; }
+            QLabel { color: #c9d1d9; font-family: 'Segoe UI', sans-serif; }
+            QPushButton { 
+                background-color: #21262d; 
+                color: #58a6ff; 
+                border: 1px solid #30363d; 
+                padding: 8px; 
+                border-radius: 6px;
+                font-weight: bold;
+            }
+            QPushButton:hover { background-color: #30363d; border-color: #8b949e; }
+            QComboBox { 
+                background-color: #0d1117; 
+                color: #c9d1d9; 
+                border: 1px solid #30363d; 
+                padding: 5px; 
+            }
+        """)
+
         # Core Components
         self.sensors = SimulatedSensors()
         self.az_motor = SimulatedMotor(initial_angle=180.0)
@@ -30,6 +51,10 @@ class SOTMDashboard(QMainWindow):
 
         self.init_ui()
         
+        # Configure Plots for Dark Theme
+        pg.setConfigOption('background', '#0d1117')
+        pg.setConfigOption('foreground', '#c9d1d9')
+
         # Timer for control loop (50Hz)
         self.timer = QTimer()
         self.timer.timeout.connect(self.control_loop)
@@ -41,17 +66,25 @@ class SOTMDashboard(QMainWindow):
         main_layout = QVBoxLayout(central_widget)
         
         # Header
-        header = QLabel("🛰️ SOTM Stabilization Dashboard")
-        header.setStyleSheet("font-size: 24px; font-weight: bold; color: #2c3e50;")
-        main_layout.addWidget(header)
+        header_layout = QHBoxLayout()
+        header = QLabel("🛰️ GÖKBÖRÜ SOTM CONTROL CENTER")
+        header.setStyleSheet("font-size: 28px; font-weight: bold; color: #58a6ff; margin-bottom: 10px;")
+        header_layout.addWidget(header)
+        header_layout.addStretch()
+        
+        version_label = QLabel("v1.2.0-ELITE")
+        version_label.setStyleSheet("color: #8b949e; font-style: italic;")
+        header_layout.addWidget(version_label)
+        main_layout.addLayout(header_layout)
         
         # Top Panel: Info & Controls
         control_panel = QHBoxLayout()
         
-        self.status_label = QLabel("Mode: AUTO | Target: Türksat 4B")
+        self.status_label = QLabel("🟢 SYSTEM STATE: ACTIVE | TARGET: TÜRKSAT 4B")
+        self.status_label.setStyleSheet("color: #3fb950; font-weight: bold;")
         control_panel.addWidget(self.status_label)
         
-        self.log_btn = QPushButton("Start Logging")
+        self.log_btn = QPushButton("Start Mission Logging")
         self.log_btn.clicked.connect(self.toggle_logging)
         control_panel.addWidget(self.log_btn)
         
@@ -63,15 +96,17 @@ class SOTMDashboard(QMainWindow):
         # Platform Plot
         self.platform_plot = pg.PlotWidget(title="Platform Orientation (Roll/Pitch)")
         self.platform_plot.addLegend()
-        self.roll_curve = self.platform_plot.plot(pen='r', name="Roll")
-        self.pitch_curve = self.platform_plot.plot(pen='b', name="Pitch")
+        self.platform_plot.showGrid(x=True, y=True, alpha=0.1)
+        self.roll_curve = self.platform_plot.plot(pen=pg.mkPen('#f85149', width=2), name="Roll")
+        self.pitch_curve = self.platform_plot.plot(pen=pg.mkPen('#58a6ff', width=2), name="Pitch")
         plot_layout.addWidget(self.platform_plot)
         
         # Tracking Error Plot
-        self.error_plot = pg.PlotWidget(title="Tracking Error (Az/El)")
+        self.error_plot = pg.PlotWidget(title="Tracking Error Analysis (Az/El)")
         self.error_plot.addLegend()
-        self.az_error_curve = self.error_plot.plot(pen='g', name="Az Error")
-        self.el_error_curve = self.error_plot.plot(pen='y', name="El Error")
+        self.error_plot.showGrid(x=True, y=True, alpha=0.1)
+        self.az_error_curve = self.error_plot.plot(pen=pg.mkPen('#3fb950', width=2), name="Az Error")
+        self.el_error_curve = self.error_plot.plot(pen=pg.mkPen('#d29922', width=2), name="El Error")
         plot_layout.addWidget(self.error_plot)
         
         main_layout.addLayout(plot_layout)
