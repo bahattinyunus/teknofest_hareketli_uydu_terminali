@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  sotm-test:
+    build: .
+    container_name: gokboru_tester
+    command: pytest tests/ -v
+
+  sotm-sim:
+    build: .
+    container_name: gokboru_simulator
+    command: python analysis/simulations/tracking_sim.py --headless

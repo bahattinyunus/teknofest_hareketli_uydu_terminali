@@ -16,10 +16,11 @@ def main_menu():
         print("3. Run PID Auto-Optimizer (Differential Evolution)")
         print("4. Run System Unit Tests")
         print("5. Analyze Mission Log (Generate Visual Report)")
-        print("6. Exit")
+        print("6. Launch 3D Dynamic Visualization")
+        print("7. Exit")
         print("="*50)
         
-        choice = input("Select an option (1-6): ")
+        choice = input("Select an option (1-7): ")
         
         if choice == '1':
             from src.gui_app import main as launch_gui
@@ -47,6 +48,8 @@ def main_menu():
             else:
                 continue
         elif choice == '6':
+            os.system("python analysis/simulations/viz_3d.py")
+        elif choice == '7':
             print("Exiting GÖKBÖRÜ Command Center. İstikbal Göklerdedir!")
             break
         else:
