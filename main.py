@@ -52,7 +52,14 @@ def main_menu():
             else:
                 continue
         elif choice == '6':
-            os.system("python analysis/simulations/viz_3d.py")
+            print("\n--- 3D Holographic Visualizer Modes ---")
+            print("1. Standalone Simulation (Math-based)")
+            print("2. Live Digital Twin (Binds to UDP 1923 for real telemetry)")
+            sub_choice = input("Select mode (1/2): ")
+            if sub_choice == '2':
+                os.system("python analysis/simulations/viz_3d.py --live")
+            else:
+                os.system("python analysis/simulations/viz_3d.py")
         elif choice == '7':
             os.system("python analysis/simulations/udp_listener.py")
         elif choice == '8':
