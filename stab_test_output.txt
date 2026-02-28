@@ -1,0 +1,50 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.0.2, pluggy-1.6.0 -- C:\Users\bahat\AppData\Local\Programs\Python\Python311\python.exe
+cachedir: .pytest_cache
+rootdir: G:\Di­er bilgisayarlar\Diz³st³ Bilgisayar²m\github repolar²m\teknofest_hareketli_uydu_terminali
+configfile: pyproject.toml
+plugins: anyio-4.12.1, langsmith-0.6.8
+collecting ... collected 3 items
+
+tests/test_stabilization.py::test_stabilizer_error_calculation FAILED    [ 33%]
+tests/test_stabilization.py::test_stabilizer_re_pointing FAILED          [ 66%]
+tests/test_stabilization.py::test_stabilizer_pid_clamping FAILED         [100%]
+
+================================== FAILURES ===================================
+______________________ test_stabilizer_error_calculation ______________________
+
+    def test_stabilizer_error_calculation():
+        stabilizer = SOTMStabilizer(target_az=180.0, target_el=45.0)
+    
+        # No motion, at target
+>       state = stabilizer.update(roll=0, pitch=0, yaw=0, current_az=180.0, current_el=45.0, dt=0.02)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: SOTMStabilizer.update() got an unexpected keyword argument 'roll'
+
+tests\test_stabilization.py:8: TypeError
+_________________________ test_stabilizer_re_pointing _________________________
+
+    def test_stabilizer_re_pointing():
+        stabilizer = SOTMStabilizer(target_az=180.0, target_el=45.0)
+    
+        # Change target
+>       stabilizer.kinematics.set_target_satellite(target_az=90.0, target_el=30.0)
+E       TypeError: SOTMKinematics.set_target_satellite() got an unexpected keyword argument 'target_az'
+
+tests\test_stabilization.py:16: TypeError
+________________________ test_stabilizer_pid_clamping _________________________
+
+    def test_stabilizer_pid_clamping():
+        stabilizer = SOTMStabilizer()
+        # Mock large error to trigger clamping if implemented (check source)
+        # This is a placeholder for checking logic consistency
+>       state = stabilizer.update(roll=20, pitch=20, yaw=0, current_az=0, current_el=0, dt=0.02)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: SOTMStabilizer.update() got an unexpected keyword argument 'roll'
+
+tests\test_stabilization.py:24: TypeError
+=========================== short test summary info ===========================
+FAILED tests/test_stabilization.py::test_stabilizer_error_calculation - TypeE...
+FAILED tests/test_stabilization.py::test_stabilizer_re_pointing - TypeError: ...
+FAILED tests/test_stabilization.py::test_stabilizer_pid_clamping - TypeError:...
+============================== 3 failed in 0.37s ==============================
