@@ -191,7 +191,15 @@ A critical "God-Tier" feature: GÖKBÖRÜ is built to survive contested electrom
 - **GNSS/IMU Spoofing Rejection:** The `SOTMSensorFusion` module uses Mahalanobis Distance checks to reject physically impossible orientation jumps injected by spoofers.
 - **Test the Resilience:** The built-in EW Simulator (`analysis/simulations/ew_jammer.py`) executes 4 distinct phases of electronic attacks against the UDP Ground Station stream.
 
-### **5. Mission Data Replay System**
+### **5. Hardware-in-the-Loop (HIL) & Edge Integration**
+Directly bridging the gap between simulation and the actual Teknofest physical build.
+- **UART Serial Interface:** `src/serial_interface.py` uses `pyserial` to maintain high-frequency (115200 bps) sync-packet communication directly with the physical STM32 microcontroller.
+
+### **6. Full-Stack Elite Command Dashboard**
+Beyond PyQt6, we offer a modern, responsive web-based command center.
+- **Streamlit Integration:** Launch the browser-based dashboard directly from `main.py` (Option 9) or via `streamlit run analysis/dashboards/web_dashboard.py` to monitor global telemetry from any device with a web browser.
+
+### **7. Mission Data Replay System**
 `src/replay_system.py` ile kaydedilmiş uçuş verileri (binary/CSV) sisteme geri beslenebilir. Bu sayede sahada yaşanan bir takip hatası, laboratuvar ortamında saniye saniye tekrar oynatılarak analiz edilebilir.
 
 ---
