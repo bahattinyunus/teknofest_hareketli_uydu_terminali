@@ -199,7 +199,12 @@ Directly bridging the gap between simulation and the actual Teknofest physical b
 Beyond PyQt6, we offer a modern, responsive web-based command center.
 - **Streamlit Integration:** Launch the browser-based dashboard directly from `main.py` (Option 9) or via `streamlit run analysis/dashboards/web_dashboard.py` to monitor global telemetry from any device with a web browser.
 
-### **7. Mission Data Replay System**
+### **7. Edge AI & Predictive Maintenance**
+Deploying artificial intelligence directly to the hardware inference level.
+- **Machine Learning Diagnostics:** `analysis/ai_models/vibration_analyzer.py` implements an **Isolation Forest** (Unsupervised Learning) algorithm to detect mechanical anomalies (actuator fatigue, gear wear) in real-time IMU vibration patterns.
+- **Automated OTA Deployment:** `scripts/deploy_edge.sh` automates the direct Over-The-Air pushing of the entire ecosystem to Edge Computers (Raspberry Pi 4 / Nvidia Jetson Nano) deployed in the field.
+
+### **8. Mission Data Replay System**
 `src/replay_system.py` ile kaydedilmiş uçuş verileri (binary/CSV) sisteme geri beslenebilir. Bu sayede sahada yaşanan bir takip hatası, laboratuvar ortamında saniye saniye tekrar oynatılarak analiz edilebilir.
 
 ---
